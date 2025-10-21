@@ -1,98 +1,140 @@
-#include "flights.h"
+#include "passengers.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-struct Flight {
-    char *id;            // AA1234 (2 letras + 3–4 dígitos)
-    char *airline;
-    char *aircraft_id;
-    char *origin;        // IATA
-    char *destination;   // IATA
-    char *schedule_departure; // "YYYY/MM/DD HH:MM:SS"
-    char *schedule_arrival;
-    char *actual_departure;   // ou "N/A"
-    char *actual_arrival;     // ou "N/A"
-    FlightStatus status;
+struct Passenger {
+    int  *document_number;  
+    char *first_name;
+    char *last_name;
+    char *dob;        
+    char *nationality;   
+    char *gender; 
+    char *email;
+    int  *phone;   
+    char *adress;     
+    char *photo;
 };
 
-static char *dupstr(const char *s){ if(!s) return NULL; size_t n=strlen(s)+1; char *r=malloc(n); if(r) memcpy(r,s,n); return r; }
-static bool is_iata(const char *s){ return s && strlen(s)==3 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]) && isupper((unsigned char)s[2]); }
-static bool is_flight_id(const char *s){
-    if(!s) return false;
-    size_t n=strlen(s);
-    if(n<5||n>7) return false;
-    if(!isupper((unsigned char)s[0])||!isupper((unsigned char)s[1])) return false;
-    for(size_t i=2;i<n;i++) if(!isdigit((unsigned char)s[i])) return false;
-    return true;
+
+Passenger *passenger_new(int *document_number, const char *first_name, const char *last_name,
+                   const char *dob, const char *nationality,
+                   const char *gender, const char *email,
+                   int *phone, const char *adress, const char *photo)
+                   Passenger *p = calloc(1,sizeof(*p)){
+    if(!p) return NULL;
+    p->document_number = document_number;
+    p->first_name = dupstr(first_name);
+    p->last_name = dupstr(last_name);
+    p->dob = dupstr(dob);
+    p->nationality = dupstr (nationality);
+    p->gender = dupstr (gender);
+    p->email = dupstr(email);
+    p->phone = phone;
+    p->adress = dupstr(adress);
+    p->photo = dupstr(photo);
+    return p;
 }
 
-FlightStatus flight_status_from_string(const char *s){
-    if(!s) return FLIGHT_UNKNOWN;
-    if(strcasecmp(s,"scheduled")==0) return FLIGHT_SCHEDULED;
-    if(strcasecmp(s,"cancelled")==0) return FLIGHT_CANCELLED;
-    if(strcasecmp(s,"delayed")==0)   return FLIGHT_DELAYED;
-    if(strcasecmp(s,"done")==0)      return FLIGHT_DONE;
-    return FLIGHT_UNKNOWN;
-}
-
-Flight *flight_new(const char *id, const char *airline, const char *aircraft_id,
-                   const char *origin, const char *destination,
-                   const char *schedule_departure, const char *schedule_arrival,
-                   const char *actual_departure, const char *actual_arrival,
-                   FlightStatus status){
-    if(!is_flight_id(id)) return NULL;
-    if(!is_iata(origin) || !is_iata(destination) || strcmp(origin,destination)==0) return NULL;
-    Flight *f = calloc(1,sizeof(*f));
-    if(!f) return NULL;
-    f->id = dupstr(id);
-    f->airline = dupstr(airline);
-    f->aircraft_id = dupstr(aircraft_id);
-    f->origin = dupstr(origin);
-    f->destination = dupstr(destination);
-    f->schedule_departure = dupstr(schedule_departure);
-    f->schedule_arrival = dupstr(schedule_arrival);
-    f->actual_departure = dupstr(actual_departure);
-    f->actual_arrival = dupstr(actual_arrival);
-    f->status = status;
-    return f;
-}
-
-void flight_free(Flight *f){
+void passenger_free(Passenger *p){
     if(!f) return;
-    free(f->id); free(f->airline); free(f->aircraft_id);
-    free(f->origin); free(f->destination);
-    free(f->schedule_departure); free(f->schedule_arrival);
-    free(f->actual_departure); free(f->actual_arrival);
+    free(f->document_number);
+    free(f->first_name);
+    free(f->last_name);
+    free(f->dob);
+    free(f->nationality);
+    free(f->gender);
+    free(f->email);
+    free(f->phone);
+    free(f->adress);
+    free(f->photo);
     free(f);
 }
 
-const char *flight_get_id(const Flight *f){ return f? f->id: NULL; }
-const char *flight_get_airline(const Flight *f){ return f? f->airline: NULL; }
-const char *flight_get_aircraft_id(const Flight *f){ return f? f->aircraft_id: NULL; }
-const char *flight_get_origin(const Flight *f){ return f? f->origin: NULL; }
-const char *flight_get_destination(const Flight *f){ return f? f->destination: NULL; }
-const char *flight_get_schedule_departure(const Flight *f){ return f? f->schedule_departure: NULL; }
-const char *flight_get_schedule_arrival(const Flight *f){ return f? f->schedule_arrival: NULL; }
-const char *flight_get_actual_departure(const Flight *f){ return f? f->actual_departure: NULL; }
-const char *flight_get_actual_arrival(const Flight *f){ return f? f->actual_arrival: NULL; }
-FlightStatus flight_get_status(const Flight *f){ return f? f->status: FLIGHT_UNKNOWN; }
+int        *passenger_get_document_number(const Passenger *p){ return p? p->document_number: NULL; }
+const char *passenger_get_first_name(const Passenger *p){ return p? p->first_name: NULL; }
+const char *passenger_get_last_name(const Passenger *p){ return p? p->last_name: NULL; }
+const char *passenger_get_dob(const Passenger *p){ return p? p->dob: NULL; }
+const char *passenger_get_nationality(const Passenger *p){ return p? p->nationality: NULL; }
+const char *passenger_get_gender(const Passenger *p){ return p? p->gender: NULL; }
+const char *passenger_get_email(const Passenger *p){ return p? p->email: NULL; }
+int        *passenger_get_phone(const Passenger *p){ return p? p->phone: NULL; }
+const char *passenger_get_adress(const Passenger *p){ return p? p->adress: NULL; }
+const char *passenger_get_photo(const Passenger *p){ return p? p->photo: NULL; }
 
-bool flight_set_actual_departure(Flight *f, const char *dt){
+
+bool passenger_set_document_number(Passenger *p, const char *dt){
     if(!f) return false;
     char *d = dupstr(dt);
     if(!d && dt) return false;
-    free(f->actual_departure); f->actual_departure = d;
+    free(p->document_number); p->document_number = d;
     return true;
 }
-bool flight_set_actual_arrival(Flight *f, const char *dt){
+bool passenger_set_first_name(Passenger *p, const char *name){
     if(!f) return false;
-    char *d = dupstr(dt);
-    if(!d && dt) return false;
-    free(f->actual_arrival); f->actual_arrival = d;
+    char *d = dupstr(name);
+    if(!d && name) return false;
+    free(p->first_name); p->first_name = d;
     return true;
 }
-bool flight_set_status(Flight *f, FlightStatus st){
+bool passenger_set_last_name(Passenger *p, const char *name){
     if(!f) return false;
-    f->status = st; return true;
+    char *d = dupstr(name);
+    if(!d && name) return false;
+    free(p->last_name); p->last_name = d;
+    return true;
 }
+bool passenger_set_dob(Passenger *p, const char *dob){
+    if(!f) return false;
+    char *d = dupstr(dob);
+    if(!d && dob) return false;
+    free(p->dob); p->dob = d;
+    return true;
+}
+bool passenger_set_nationality(Passenger *p, const char *nationality){
+    if (!f) return false;
+    char *d = dupstr (nationality);
+    if(!d && nationality) return false;
+    free(p->nationality); p->nationality = d;
+    return true;
+}
+bool passenger_set_gender(Passenger *p, const char *gender){
+    if (!f) return false;
+    char *d = dupstr (gender);
+    if(!d && gender) return false;
+    free(p->gender); p->gender = d;
+    returmn true;
+}
+bool passenger_set_email(Passenger *p, const char *email){
+    if(!f) return false;
+    char *d = dupstr(email);
+    if(!d && email) return false;
+    free(p->email); p->email = d;
+    return true;
+}
+bool passenger_set_phone(Passenger *p, const char *phone){
+    if(!f) return false;
+    char *d = dupstr(phone);
+    if(!d && phone) return false;
+    free(p->phone); p->phone = d;
+    return true;
+}
+bool passenger_set_adress(Passenger *p, const char *adress){
+    if(!f) return false;
+    char *d = dupstr(adress);
+    if(!d && adress) return false;
+    free(p->adress); p->adress = d;
+    return true;
+}
+bool passenger_set_photo(Passenger *p, const char *photo){
+    if(!f) return false;
+    char *d = dupstr(photo);
+    if(!d && photo) return false;
+    free(p->photo); p->photo = d;
+    return true;
+}
+
+
+
+
+
