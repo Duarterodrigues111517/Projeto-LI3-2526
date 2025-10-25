@@ -5,14 +5,6 @@
 
 typedef struct Flight Flight;
 
-typedef enum {
-    FLIGHT_SCHEDULED,
-    FLIGHT_CANCELLED,
-    FLIGHT_DELAYED,
-    FLIGHT_DONE,
-    FLIGHT_UNKNOWN
-} FlightStatus;
-
 // Construção / destruição
 Flight *flight_new(const char *id, const char *departure, 
                    const char *actual_departure,
@@ -34,13 +26,12 @@ const char *flight_get_actual_departure(const Flight *f);
 const char *flight_get_arrival(const Flight *f);
 const char *flight_get_actual_arrival(const Flight *f);
 const char *flight_get_gate(const Flight *f);
-const char *flight_get_status_str(const Flight *f);
+const char *flight_get_status(const Flight *f);
 const char *flight_get_origin(const Flight *f);
 const char *flight_get_destination(const Flight *f);
 const char *flight_get_aircraft(const Flight *f);
 const char *flight_get_airline(const Flight *f);
 const char *flight_get_tracking_url(const Flight *f);
-FlightStatus flight_get_status(const Flight *f);
 
 // Setters
 bool flight_set_departure(Flight *f, const char *dt);
@@ -55,7 +46,4 @@ bool flight_set_aircraft(Flight *f, const char *aircraft);
 bool flight_set_airline(Flight *f, const char *airline);
 bool flight_set_tracking_url(Flight *f, const char *tracking_url);
 
-
-// Helpers
-FlightStatus flight_status_from_string(const char *s);
 #endif

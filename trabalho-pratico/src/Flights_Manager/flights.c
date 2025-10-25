@@ -1,9 +1,9 @@
-#include "flights.h"
+#include "Flights_Manager/flights.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-typedef struct flight {
+typedef struct Flight {
     char *id;
     char *departure;
     char *actual_departure;
@@ -29,14 +29,6 @@ static bool is_flight_id(const char *s){
     return true;
 }
 
-FlightStatus flight_status_from_string(const char *s){
-    if(!s) return FLIGHT_UNKNOWN;
-    if(strcasecmp(s,"scheduled")==0) return FLIGHT_SCHEDULED;
-    if(strcasecmp(s,"cancelled")==0) return FLIGHT_CANCELLED;
-    if(strcasecmp(s,"delayed")==0)   return FLIGHT_DELAYED;
-    if(strcasecmp(s,"done")==0)      return FLIGHT_DONE;
-    return FLIGHT_UNKNOWN;
-}
 
 Flight *flight_new(const char *id,
     const char *departure,
@@ -55,18 +47,18 @@ Flight *flight_new(const char *id,
     if(!is_iata(destination)) return NULL;
     Flight *f = calloc(1,sizeof(*f));
     if(!f) return NULL;
-    f->id = dupstr(id);
-    f->departure = dupstr(departure);
-    f->actual_departure = dupstr(actual_departure);
-    f->arrival = dupstr(arrival);
-    f->actual_arrival = dupstr(actual_arrival);
-    f->gate = dupstr(gate);
-    f->status = dupstr(status);
-    f->origin = dupstr(origin);
-    f->destination = dupstr(destination);
-    f->aircraft = dupstr(aircraft);
-    f->airline = dupstr(airline);
-    f->tracking_url = dupstr(tracking_url);
+    f->id = strdup(id);
+    f->departure = strdup(departure);
+    f->actual_departure = strdup(actual_departure);
+    f->arrival = strdup(arrival);
+    f->actual_arrival = strdup(actual_arrival);
+    f->gate = strdup(gate);
+    f->status = strdup(status);
+    f->origin = strdup(origin);
+    f->destination = strdup(destination);
+    f->aircraft = strdup(aircraft);
+    f->airline = strdup(airline);
+    f->tracking_url = strdup(tracking_url);
 
     return f;
 }
@@ -101,15 +93,15 @@ const char *flight_get_aircraft(const Flight *f){ return f? f->aircraft: NULL; }
 const char *flight_get_airline(const Flight *f){ return f? f->airline: NULL; }
 const char *flight_get_tracking_url(const Flight *f){ return f? f->tracking_url: NULL; }
 
-bool flight_set_id(Flight *f, const char *id){ if(!f) return false; if(!is_flight_id(id)) return false; char *d=dupstr(id); if(!d && id) return false; free(f->id); f->id=d; return true; }
-bool flight_set_departure(Flight *f, const char *departure){ if(!f) return false; char *d=dupstr(departure); if(!d && departure) return false; free(f->departure); f->departure=d; return true; }
-bool flight_set_actual_departure(Flight *f, const char *actual_departure){ if(!f) return false; char *d=dupstr(actual_departure); if(!d && actual_departure) return false; free(f->actual_departure); f->actual_departure=d; return true; }
-bool flight_set_arrival(Flight *f, const char *arrival){ if(!f) return false; char *d=dupstr(arrival); if(!d && arrival) return false; free(f->arrival); f->arrival=d; return true; }
-bool flight_set_actual_arrival(Flight *f, const char *actual_arrival){ if(!f) return false; char *d=dupstr(actual_arrival); if(!d && actual_arrival) return false; free(f->actual_arrival); f->actual_arrival=d; return true; }
-bool flight_set_gate(Flight *f, const char *gate){ if(!f) return false; char *d=dupstr(gate); if(!d && gate) return false; free(f->gate); f->gate=d; return true; }
-bool flight_set_status(Flight *f, const char *status){ if(!f) return false; char *d=dupstr(status); if(!d && status) return false; free(f->status); f->status=d; return true; }
-bool flight_set_origin(Flight *f, const char *origin){ if(!f) return false; if(!is_iata(origin)) return false; char *d=dupstr(origin); if(!d && origin) return false; free(f->origin); f->origin=d; return true; }
-bool flight_set_destination(Flight *f, const char *destination){ if(!f) return false; if(!is_iata(destination)) return false; char *d=dupstr(destination); if(!d && destination) return false; free(f->destination); f->destination=d; return true; }
-bool flight_set_aircraft(Flight *f, const char *aircraft){ if(!f) return false; char *d=dupstr(aircraft); if(!d && aircraft) return false; free(f->aircraft); f->aircraft=d; return true; }
-bool flight_set_airline(Flight *f, const char *airline){ if(!f) return false; char *d=dupstr(airline); if(!d && airline) return false; free(f->airline); f->airline=d; return true; }
-bool flight_set_tracking_url(Flight *f, const char *tracking_url){ if(!f) return false; char *d=dupstr(tracking_url); if(!d && tracking_url) return false; free(f->tracking_url); f->tracking_url=d; return true; }
+bool flight_set_id(Flight *f, const char *id){ if(!f) return false; if(!is_flight_id(id)) return false; char *d=strdup(id); if(!d && id) return false; free(f->id); f->id=d; return true; }
+bool flight_set_departure(Flight *f, const char *departure){ if(!f) return false; char *d=strdup(departure); if(!d && departure) return false; free(f->departure); f->departure=d; return true; }
+bool flight_set_actual_departure(Flight *f, const char *actual_departure){ if(!f) return false; char *d=strdup(actual_departure); if(!d && actual_departure) return false; free(f->actual_departure); f->actual_departure=d; return true; }
+bool flight_set_arrival(Flight *f, const char *arrival){ if(!f) return false; char *d=strdup(arrival); if(!d && arrival) return false; free(f->arrival); f->arrival=d; return true; }
+bool flight_set_actual_arrival(Flight *f, const char *actual_arrival){ if(!f) return false; char *d=strdup(actual_arrival); if(!d && actual_arrival) return false; free(f->actual_arrival); f->actual_arrival=d; return true; }
+bool flight_set_gate(Flight *f, const char *gate){ if(!f) return false; char *d=strdup(gate); if(!d && gate) return false; free(f->gate); f->gate=d; return true; }
+bool flight_set_status(Flight *f, const char *status){ if(!f) return false; char *d=strdup(status); if(!d && status) return false; free(f->status); f->status=d; return true; }
+bool flight_set_origin(Flight *f, const char *origin){ if(!f) return false; if(!is_iata(origin)) return false; char *d=strdup(origin); if(!d && origin) return false; free(f->origin); f->origin=d; return true; }
+bool flight_set_destination(Flight *f, const char *destination){ if(!f) return false; if(!is_iata(destination)) return false; char *d=strdup(destination); if(!d && destination) return false; free(f->destination); f->destination=d; return true; }
+bool flight_set_aircraft(Flight *f, const char *aircraft){ if(!f) return false; char *d=strdup(aircraft); if(!d && aircraft) return false; free(f->aircraft); f->aircraft=d; return true; }
+bool flight_set_airline(Flight *f, const char *airline){ if(!f) return false; char *d=strdup(airline); if(!d && airline) return false; free(f->airline); f->airline=d; return true; }
+bool flight_set_tracking_url(Flight *f, const char *tracking_url){ if(!f) return false; char *d=strdup(tracking_url); if(!d && tracking_url) return false; free(f->tracking_url); f->tracking_url=d; return true; }

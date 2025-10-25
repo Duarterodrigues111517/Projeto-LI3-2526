@@ -16,7 +16,7 @@ int        aircraft_get_capacity(const Aircraft *a);
 int        aircraft_get_range(const Aircraft *a);
 int        aircraft_get_year(const Aircraft *a);
 
-
+bool aircraft_set_id(Aircraft *a, const char *id);
 bool aircraft_set_model(Aircraft *a, const char *model);
 bool aircraft_set_manufacturer(Aircraft *a, const char *manufacturer);
 bool aircraft_set_capacity(Aircraft *a, int capacity);
