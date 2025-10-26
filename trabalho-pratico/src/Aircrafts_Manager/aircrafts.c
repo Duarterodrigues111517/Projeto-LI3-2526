@@ -27,7 +27,7 @@ Aircraft *aircraft_new(const char *id, const char *model, const char *manufactur
 }
 void aircraft_free(Aircraft *a){
     if(!a) return;
-    free(a->id); free(a->model); free(a->manufacturer); free(a->range); free(a->year);
+    free(a->id); free(a->model); free(a->manufacturer); free(a->range);
     free(a);
 }
 
