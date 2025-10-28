@@ -9,7 +9,7 @@ typedef struct Passenger Passenger;
 Passenger *passenger_new ( int  document_number, const char *first_name,
                              const char *last_name, const char *dob,
                              const char *nationality, const char *gender,
-                             const char *email, int  phone,
+                             const char *email, const char *phone,
                              const char *adress, const char *photo);
 void passenger_free(Passenger *p);
 // Getters

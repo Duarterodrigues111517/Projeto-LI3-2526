@@ -17,10 +17,10 @@ struct Passenger {
 };
 
 
-Passenger *passenger_new ( int  document_number, const char *first_name,
+Passenger *passenger_new (int document_number, const char *first_name,
                              const char *last_name, const char *dob,
                              const char *nationality, const char *gender,
-                             const char *email, int  phone,
+                             const char *email, const char *phone,
                              const char *adress, const char *photo){
     if(document_number <= 0) return NULL;
     Passenger *p = calloc(1,sizeof(*p));
@@ -31,8 +31,8 @@ Passenger *passenger_new ( int  document_number, const char *first_name,
     p->dob = strdup(dob);
     p->nationality = strdup(nationality);
     p->gender = strdup(gender);
-    p->email = strdup(email);   
-    p->phone = phone;
+    p->email = strdup(email);
+    p->phone = strdup(phone);
     p->adress = strdup(adress);
     p->photo = strdup(photo);
     return p;
@@ -40,7 +40,6 @@ Passenger *passenger_new ( int  document_number, const char *first_name,
 
 void passenger_free(Passenger *p){
     if(!p) return;
-    free(p->document_number);
     free(p->first_name);
     free(p->last_name);
     free(p->dob);
@@ -53,7 +52,7 @@ void passenger_free(Passenger *p){
     free(p);
 }
 
-int         passenger_get_document_number(const Passenger *p){ return p? p->document_number: NULL; }
+int         passenger_get_document_number(const Passenger *p){ return p? p->document_number: -1; }
 const char *passenger_get_first_name(const Passenger *p){ return p? p->first_name: NULL; }
 const char *passenger_get_last_name(const Passenger *p){ return p? p->last_name: NULL; }
 const char *passenger_get_dob(const Passenger *p){ return p? p->dob: NULL; }
