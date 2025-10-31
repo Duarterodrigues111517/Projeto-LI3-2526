@@ -38,9 +38,28 @@ int         aircraft_get_capacity(const Aircraft *a){ return a? a->capacity: 0; 
 int        aircraft_get_range(const Aircraft *a){ return a? a->range: 0; }
 int        aircraft_get_year(const Aircraft *a){ return a? a->year: 0; }
 
-bool aircraft_set_id(Aircraft *a, const char *id){ if(!a) return false; char *d=strdup(id); if(!d&&id) return false; free(a->id); a->id=d; return true; }
-bool aircraft_set_model(Aircraft *a, const char *model){ if(!a) return false; char *d=strdup(model); if(!d&&model) return false; free(a->model); a->model=d; return true; }
-bool aircraft_set_manufacturer(Aircraft *a, const char *manufacturer){ if(!a) return false; char *d=strdup(manufacturer); if(!d&&manufacturer) return false; free(a->manufacturer); a->manufacturer=d; return true; }
+bool aircraft_set_id(Aircraft *a, const char *id){ 
+    if(!a || !id) return false;
+    if (strlen(id) == 0) return false;
+    if (a->id) free(a->id);
+    a->id = strdup(id);
+    return true;
+    }
+bool aircraft_set_model(Aircraft *a, const char *model){ 
+     if(!a || !model) return false;
+     if (strlen(model) == 0) return false;  
+     if (a->model) free(a->model);
+     a->model = strdup(model); 
+     return true; }
+bool aircraft_set_manufacturer(Aircraft *a, const char *manufacturer){ 
+    if(!a || !manufacturer) return false; 
+    if(strlen(manufacturer) == 0) return false;
+    char *d = strdup(manufacturer);
+    if(!d) return false;
+    if(a->manufacturer) free(a->manufacturer);
+    a->manufacturer = d;
+    return true;
+}
 bool aircraft_set_capacity(Aircraft *a, int capacity){ if(!a) return false; if(capacity<0) return false; a->capacity=capacity; return true; }
 bool aircraft_set_range(Aircraft *a, int range){ if(!a) return false; a->range=range; return true; }
 bool aircraft_set_year(Aircraft *a, int year){ if(!a) return false; a->year=year; return true; }
