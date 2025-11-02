@@ -21,17 +21,14 @@ int process_line(FILE *file, GArray *array, char **lineCopy) {
         char *token;
 
         while ((token = strsep(&aux, ",")) != NULL) {
-            // remove \r at end
             size_t tlen = strlen(token);
             if (tlen > 0 && token[tlen - 1] == '\r')
                 token[--tlen] = '\0';
 
-            // strip any leading/trailing quotes (simple cleanup)
             while (*token == '"') token++;
             tlen = strlen(token);
             while (tlen > 0 && token[tlen - 1] == '"') token[--tlen] = '\0';
 
-            // unescape double quotes inside ("" → ")
             char *clean = malloc(strlen(token) + 1);
             char *src = token, *dst = clean;
             while (*src) {
