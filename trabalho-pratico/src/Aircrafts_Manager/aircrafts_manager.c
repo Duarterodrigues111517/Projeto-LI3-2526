@@ -5,3 +5,11 @@ struct AircraftManager {
     GHashTable *aircrafts_table;
 
 };
+
+// Destroy
+void destroy_aircraft(void *a) {
+    aircraft_free((Aircraft *)a);
+}
+
+//Create
+
