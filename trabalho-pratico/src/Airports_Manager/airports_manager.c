@@ -3,5 +3,4 @@
 
 struct AirportsManager {
     GHashTable *airports_table;
-    pool_t *airports_pool;
 };

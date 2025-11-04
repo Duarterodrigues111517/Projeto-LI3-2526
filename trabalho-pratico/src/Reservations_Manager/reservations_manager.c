@@ -3,5 +3,4 @@
 
 struct ReservationsManager {
     GHashTable *reservations_table;
-    pool_t *reservations_pool;
 };

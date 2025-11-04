@@ -3,5 +3,5 @@
 
 struct AircraftManager {
     GHashTable *aircrafts_table;
-    pool_t *aircrafts_pool;
+
 };
