@@ -8,6 +8,10 @@
 
 typedef struct FligthsManager FlightsManager_t;
 
-
+void destroy_flight(void *f);
+FlightsManager_t *flights_manager_new(void);
+void flights_manager_free(FlightsManager_t *fm);
+void flights_manager_add(FlightsManager_t *fm, Flight *f);
+Flight *flights_manager_get(const FlightsManager_t *fm, const char *id);
 
 #endif
