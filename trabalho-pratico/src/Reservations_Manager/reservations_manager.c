@@ -42,7 +42,9 @@ void reservations_manager_free(ReservationsManager_t *rm) {
 void reservations_manager_add(ReservationsManager_t *rm, Reservation *r) {
     if (!rm || !r) return;
 
-    g_hash_table_insert(rm->reservations_table, g_strdup(r->id), r);
+    g_hash_table_insert(rm->reservations_table,
+                    g_strdup(reservation_get_reservation_id(r)), r);
+
 }
 
 // Get reservation

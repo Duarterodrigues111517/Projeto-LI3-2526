@@ -47,7 +47,9 @@ void flights_manager_free(FlightsManager_t *fm) {
 void flights_manager_add(FlightsManager_t *fm, Flight *f) {
     if (!fm || !f) return;
 
-    g_hash_table_insert(fm->flights_table, g_strdup(f->id), f);
+   g_hash_table_insert(fm->flights_table,
+                    g_strdup(flight_get_id(f)), f);
+
 } 
 
 // Get flight

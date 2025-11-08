@@ -6,7 +6,7 @@
 #include "../utils/pool.h"
 #include <glib.h>
 
-typedef struct AircraftManager AircraftManager_t;
+typedef struct AircraftsManager AircraftsManager_t;
 
 void destroy_aircraft(void *a);
 AircraftsManager_t *aircrafts_manager_new(void);

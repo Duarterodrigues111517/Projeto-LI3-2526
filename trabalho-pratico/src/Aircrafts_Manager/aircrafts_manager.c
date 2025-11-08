@@ -1,7 +1,7 @@
 #include "Aircrafts_Manager/aircrafts_manager.h"
 
 
-struct AircraftManager {
+struct AircraftsManager {
     GHashTable *aircrafts_table;
 
 };
@@ -14,7 +14,7 @@ void destroy_aircraft(void *a) {
 //Create 
 
 AircraftsManager_t *aircrafts_manager_new(void) {
-    AircraftsManager_t *acm = \malloc(sizeof(AircraftsManager_t));
+    AircraftsManager_t *acm = malloc(sizeof(AircraftsManager_t));
     if (!acm) return NULL;
 
     acm->aircrafts_table = g_hash_table_new_full(
@@ -38,11 +38,11 @@ void aircrafts_manager_free(AircraftsManager_t *acm) {
     free(acm);
 }
 
-// Add aircraft 
+// Add aircraft
 void aircrafts_manager_add(AircraftsManager_t *acm, Aircraft *a) {
     if (!acm || !a) return;
-
-    g_hash_table_insert(acm->aircrafts_table, g_strdup(a->id), a);
+    g_hash_table_insert(acm->aircrafts_table,
+                        g_strdup(aircraft_get_id(a)), a);  
 }
 
 // Get aircraft 

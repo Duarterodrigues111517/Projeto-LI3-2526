@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include "utils/validators.h"
 
 static int all_digits(const char *s) {

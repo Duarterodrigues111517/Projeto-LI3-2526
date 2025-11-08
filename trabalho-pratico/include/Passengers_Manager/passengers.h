@@ -6,14 +6,20 @@
 typedef struct Passenger Passenger;
 
 // Construção / destruição
-Passenger *passenger_new ( int  document_number, const char *first_name,
-                             const char *last_name, const char *dob,
-                             const char *nationality, const char *gender,
-                             const char *email, const char *phone,
-                             const char *adress, const char *photo);
+Passenger *passenger_new(const char *document_number,
+                         const char *first_name,
+                         const char *last_name,
+                         const char *dob,
+                         const char *nationality,
+                         const char *gender,
+                         const char *email,
+                         const char *phone,
+                         const char *adress,
+                         const char *photo);
 void passenger_free(Passenger *p);
+
 // Getters
-int         passenger_get_document_number(const Passenger *p);
+const char *passenger_get_document_number(const Passenger *p);
 const char *passenger_get_first_name(const Passenger *p);
 const char *passenger_get_last_name(const Passenger *p);
 const char *passenger_get_dob(const Passenger *p);
@@ -23,8 +29,9 @@ const char *passenger_get_email(const Passenger *p);
 const char *passenger_get_phone(const Passenger *p);
 const char *passenger_get_adress(const Passenger *p);
 const char *passenger_get_photo(const Passenger *p);
-// Setters (retornam false se input inválido)
-bool passenger_set_document_number(Passenger *p, int dt);
+
+// Setters
+bool passenger_set_document_number(Passenger *p, const char *document_number);
 bool passenger_set_first_name(Passenger *p, const char *name);
 bool passenger_set_last_name(Passenger *p, const char *name);
 bool passenger_set_dob(Passenger *p, const char *dob);
@@ -36,3 +43,4 @@ bool passenger_set_adress(Passenger *p, const char *adress);
 bool passenger_set_photo(Passenger *p, const char *photo);
 
 #endif
+
