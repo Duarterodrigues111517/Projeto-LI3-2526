@@ -37,4 +37,12 @@ int is_valid_bracket_list(const char *s);   // starts '[' and ends ']'
 int is_valid_status(const char *s);     // "Scheduled" | "Cancelled" | "Delayed"
 int is_nonempty_str(const char *s);     // não vazio (ignora espaços)
 
+
+int is_valid_reservation_id(const char *s);
+int is_valid_document_number(const char *s);
+int is_valid_list(const char *s);
+int is_valid_date(const char *s);
+int is_valid_class(const char *s);
+int is_nonempty_str(const char *s);
+
 #endif

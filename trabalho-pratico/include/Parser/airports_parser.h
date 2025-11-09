@@ -1,7 +1,6 @@
 #ifndef AIRPORTS_PARSER_H
 #define AIRPORTS_PARSER_H
 
-
 #include "utils/validators.h"
 #include "Airports_Manager/airports_manager.h"
 #include <string.h>

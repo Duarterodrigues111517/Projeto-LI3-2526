@@ -1,7 +1,10 @@
-// Parser/aircrafts_parser.c
 #include "Parser/aircrafts_parser.h"
+#include "utils/validators.h"
 #include <ctype.h>
+#include <string.h>
+#include <stdio.h>
 
+#define AIRCRAFTS_ERR_PATH "resultados/aircrafts_errors.csv"
 
 // Mesmo helper do airports_parser
 static void ensure_errors_file(FILE **fp, const char *path, const char *header) {
