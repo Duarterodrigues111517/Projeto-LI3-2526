@@ -38,11 +38,18 @@ int is_valid_status(const char *s);     // "Scheduled" | "Cancelled" | "Delayed"
 int is_nonempty_str(const char *s);     // não vazio (ignora espaços)
 
 
-int is_valid_reservation_id(const char *s);
 int is_valid_document_number(const char *s);
-int is_valid_list(const char *s);
-int is_valid_date(const char *s);
-int is_valid_class(const char *s);
 int is_nonempty_str(const char *s);
+int is_valid_gender(const char *s);        // M, F ou O
+int is_valid_date(const char *s);          // aaaa-mm-dd
+int is_valid_country_code(const char *s);  // [A-Z]{2}
+int is_valid_email(const char *s);
+
+int is_valid_reservation_id(const char *s);
+int is_valid_list(const char *s);
+int is_valid_class(const char *s);
+int is_valid_flight_id(const char *s);
+
+
 
 #endif

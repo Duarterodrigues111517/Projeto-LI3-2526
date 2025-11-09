@@ -126,3 +126,7 @@ int is_valid_status(const char *s) {
         strcmp(s, "Delayed")   == 0
     );
 }
+
+int is_valid_country_code(const char *s) {
+    return s && strlen(s)==2 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]);
+}
