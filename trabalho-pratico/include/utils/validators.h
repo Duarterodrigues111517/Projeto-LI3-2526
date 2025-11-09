@@ -34,4 +34,7 @@ int is_valid_gender(const char *s);         // {M,F,O}
 // CSV "list" fields with [...] delimiters (no deep semantics here, Phase-1)
 int is_valid_bracket_list(const char *s);   // starts '[' and ends ']'
 
+int is_valid_status(const char *s);     // "Scheduled" | "Cancelled" | "Delayed"
+int is_nonempty_str(const char *s);     // não vazio (ignora espaços)
+
 #endif

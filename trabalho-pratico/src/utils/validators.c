@@ -112,3 +112,17 @@ int is_valid_bracket_list(const char *s) {
     size_t n = s? strlen(s):0;
     return n>=2 && s[0]=='[' && s[n-1]==']';
 }
+
+int is_nonempty_str(const char *s) {
+    if (!s) return 0;
+    while (*s && isspace((unsigned char)*s)) s++;
+    return *s != '\0';
+}
+
+int is_valid_status(const char *s) {
+    return s && (
+        strcmp(s, "Scheduled") == 0 ||
+        strcmp(s, "Cancelled") == 0 ||
+        strcmp(s, "Delayed")   == 0
+    );
+}
