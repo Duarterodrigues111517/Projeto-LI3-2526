@@ -7,6 +7,7 @@
 #include "Parser/flights_parser.h"
 #include "Parser/reservations_parser.h"
 #include "Parser/passengers_parser.h"
+#include "Parser/parser_queries.h"
 
 #ifndef OUTPUT_DIR
 #define OUTPUT_DIR "resultados/"
@@ -19,7 +20,7 @@ int main(int argc, char *argv[]) {
     }
 
     const char *datasetDir = argv[1];
-    // const char *inputFile = argv[2]; // usa quando fores ler as queries
+    const char *inputFile = argv[2]; // usa quando fores ler as queries
     const char *outputDir = OUTPUT_DIR;
     (void)outputDir; 
     char *airports_file = malloc(strlen(datasetDir) + strlen("/airports.csv") + 1);
@@ -44,6 +45,10 @@ int main(int argc, char *argv[]) {
     (void)reservations_mgr;
     PassengersManager_t *passengers_mgr = parse_passengers_file(passengers_file);
     (void)passengers_mgr;
+
+    parse_queries(argv[2], airports_table);
+
+    airports_manager_free(airports_table);
 
 
 
