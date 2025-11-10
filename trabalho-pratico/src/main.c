@@ -1,51 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib.h>
-
+#include <string.h>
 #include "Parser/parser.h"
+#include "Parser/airports_parser.h"
+#include "Parser/aircrafts_parser.h"
+#include "Parser/flights_parser.h"
+#include "Parser/reservations_parser.h"
+#include "Parser/passengers_parser.h"
 
-static void print_fields(GArray *arr, long line_no) {
-    printf("Linha %ld -> %u campos\n", line_no, arr->len);
-    for (guint i = 0; i < arr->len; i++) {
-        char *field = g_array_index(arr, char*, i);
-        printf("  [%u] %s\n", i, field ? field : "(null)");
-    }
-}
+#ifndef OUTPUT_DIR
+#define OUTPUT_DIR "resultados/"
+#endif
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "Uso: %s <ficheiro.csv>\n", argv[0]);
-        return 1;
-    }
-
-    const char *csv = argv[1];
-    FILE *fp = fopen(csv, "r");
-    if (!fp) { perror("fopen"); return 2; }
-
-    // Array de char* (NÃO zero-terminated).
-    GArray *fields = g_array_new(FALSE, FALSE, sizeof(char*));
-    char *lineCopy = NULL;
-
-    long line_no = 0;
-    // Se o CSV tiver header e não o quiseres imprimir, lê 1x e ignora:
-    // process_line(fp, fields, &lineCopy); free(lineCopy); free_garray_parsed_elements(fields);
-
-    while (process_line(fp, fields, &lineCopy)) {
-        line_no++;
-        // tira o '\n' da cópia só para debug mais limpo
-        lineCopy[strcspn(lineCopy, "\n")] = '\0';
-
-        // Mostra os campos parseados
-        print_fields(fields, line_no);
-
-        // limpa para a próxima
-        free(lineCopy);
-        lineCopy = NULL;
-        free_garray_parsed_elements(fields);
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <path dataset> <input>\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
-    free(lineCopy); // seguro, pode ser NULL
-    free_garray_parsed(fields);
-    fclose(fp);
-    return 0;
+    const char *datasetDir = argv[1];
+    // const char *inputFile = argv[2]; // usa quando fores ler as queries
+    const char *outputDir = OUTPUT_DIR;
+    (void)outputDir; 
+    char *airports_file = malloc(strlen(datasetDir) + strlen("/airports.csv") + 1);
+    char *aircrafts_file = malloc(strlen(datasetDir) + strlen("/aircrafts.csv") + 1);
+    char *flights_file = malloc(strlen(datasetDir) + strlen("/flights.csv") + 1);
+    char *reservations_file = malloc(strlen(datasetDir) + strlen("/reservations.csv") + 1);
+    char *passengers_file = malloc(strlen(datasetDir) + strlen("/passengers.csv") + 1);
+
+    strcpy(airports_file, datasetDir);   strcat(airports_file, "/airports.csv");
+    strcpy(aircrafts_file, datasetDir);  strcat(aircrafts_file, "/aircrafts.csv");
+    strcpy(flights_file, datasetDir);    strcat(flights_file, "/flights.csv");
+    strcpy(reservations_file, datasetDir); strcat(reservations_file, "/reservations.csv");
+    strcpy(passengers_file, datasetDir); strcat(passengers_file, "/passengers.csv");
+
+    AirportsManager_t *airports_table = parse_airports_file(airports_file);
+    (void)airports_table; // remove depois de usar
+    AircraftsManager_t *aircrafts_mgr = parse_aircrafts_file(aircrafts_file);
+    (void)aircrafts_mgr;
+    FlightsManager_t *flights_mgr = parse_flights_file(flights_file);
+    (void)flights_mgr;
+    ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file);
+    (void)reservations_mgr;
+    PassengersManager_t *passengers_mgr = parse_passengers_file(passengers_file);
+    (void)passengers_mgr;
+
+
+
+    free(airports_file);
+    free(aircrafts_file);
+    free(flights_file);
+    free(reservations_file);
+    free(passengers_file);
+
+    return EXIT_SUCCESS;
 }

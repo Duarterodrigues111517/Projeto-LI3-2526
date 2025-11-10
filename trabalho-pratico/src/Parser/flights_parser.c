@@ -104,3 +104,31 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 }
 
 
+FlightsManager_t *parse_flights_file(const char *csvPath) {
+    FILE *fp = fopen(csvPath, "r");
+    if (!fp) { perror("flights.csv"); return flights_manager_new(); }
+
+    FlightsManager_t *mgr = flights_manager_new();
+
+    GArray *fields = g_array_new(FALSE, FALSE, sizeof(char *));
+    char *raw = NULL;
+    char *header = NULL;
+    FILE *errors_fp = NULL;
+
+    if (!process_line(fp, fields, &raw)) goto cleanup;
+    header = g_strdup(raw);
+    free(raw); raw = NULL;
+
+    while (process_line(fp, fields, &raw)) {
+        parse_flight_row(fields, raw, header, mgr, &errors_fp);
+        free(raw); raw = NULL;
+    }
+
+cleanup:
+    if (errors_fp) fclose(errors_fp);
+    if (header) g_free(header);
+    if (raw) free(raw);
+    if (fields) free_garray_parsed(fields);
+    fclose(fp);
+    return mgr;
+}

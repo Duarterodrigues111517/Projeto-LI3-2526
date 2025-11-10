@@ -87,3 +87,32 @@ int parse_aircraft_row(GArray *f, const char *raw, const char *header,
     aircrafts_manager_add(mgr, a);
     return 1;
 }
+
+
+AircraftsManager_t *parse_aircrafts_file(const char *path) {
+    AircraftsManager_t *mgr = aircrafts_manager_new();
+    FILE *fp = fopen(path, "r");
+    if (!fp) { perror("aircrafts.csv"); return mgr; }
+
+    GArray *fields = g_array_new(FALSE, FALSE, sizeof(char *));
+    char *raw = NULL;
+    char *header = NULL;
+    FILE *errors_fp = NULL;
+
+    if (!process_line(fp, fields, &raw)) goto cleanup;
+    header = g_strdup(raw);
+    free(raw); raw = NULL;
+
+    while (process_line(fp, fields, &raw)) {
+        parse_aircraft_row(fields, raw, header, mgr, &errors_fp);
+        free(raw); raw = NULL;
+    }
+
+cleanup:
+    if (errors_fp) fclose(errors_fp);
+    if (header) g_free(header);
+    if (raw) free(raw);
+    if (fields) free_garray_parsed(fields);
+    fclose(fp);
+    return mgr;
+}
