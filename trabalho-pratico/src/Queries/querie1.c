@@ -5,7 +5,7 @@
 void querie1(const char *args, AirportsManager_t *am, const char *output_path) {
     if (!args || !am || !output_path) return;
 
-    // Extrair o código IATA (ex.: "OPO")
+    // Extrair o código IATA 
     char code[16] = {0};
     sscanf(args, "%15s", code);
 
@@ -22,7 +22,7 @@ void querie1(const char *args, AirportsManager_t *am, const char *output_path) {
                 airport_get_country(a),
                 airport_get_type(a));
     } else {
-        // Código não encontrado → linha vazia
+        // Código não encontrado
         fputc('\n', f);
     }
 
