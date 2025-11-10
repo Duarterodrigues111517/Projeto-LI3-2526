@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     PassengersManager_t *passengers_mgr = parse_passengers_file(passengers_file);
     (void)passengers_mgr;
 
-    parse_queries(argv[2], airports_table);
+    parse_queries(inputFile, airports_table);
 
     airports_manager_free(airports_table);
 

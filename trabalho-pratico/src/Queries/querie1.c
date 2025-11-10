@@ -15,7 +15,7 @@ void querie1(const char *args, AirportsManager_t *am, const char *output_path) {
     if (!f) { perror("querie1: fopen"); return; }
 
     if (a) {
-        fprintf(f, "%s;%s;%s;%s;%s\n",
+        fprintf(f, "%s,%s,%s,%s,%s\n",
                 airport_get_code(a),
                 airport_get_name(a),
                 airport_get_city(a),
