@@ -41,12 +41,18 @@ int is_valid_date(const char *s) {
 
 int is_valid_datetime(const char *s) {
     // "aaaa-mm-dd hh:mm"
-    if (!s || strlen(s)!=16) return 0;
-    if (s[4]!='-'||s[7]!='-'||s[10]!=' '||s[13]!=':') return 0;
-    if (!is_valid_date(s)) return 0;
-    int hh = (s[11]-'0')*10+(s[12]-'0');
-    int mm = (s[14]-'0')*10+(s[15]-'0');
-    if (hh<0||hh>23||mm<0||mm>59) return 0;
+    if (!s || strlen(s) != 16) return 0;
+    if (s[4] != '-' || s[7] != '-' || s[10] != ' ' || s[13] != ':') return 0;
+
+    // validate date part s[0..9]
+    char date[11];
+    memcpy(date, s, 10);
+    date[10] = '\0';
+    if (!is_valid_date(date)) return 0;
+
+    int hh = (s[11]-'0')*10 + (s[12]-'0');
+    int mm = (s[14]-'0')*10 + (s[15]-'0');
+    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return 0;
     return 1;
 }
 
@@ -121,7 +127,7 @@ int is_nonempty_str(const char *s) {
 
 int is_valid_status(const char *s) {
     return s && (
-        strcmp(s, "Scheduled") == 0 ||
+        strcmp(s, "On Time") == 0 ||
         strcmp(s, "Cancelled") == 0 ||
         strcmp(s, "Delayed")   == 0
     );

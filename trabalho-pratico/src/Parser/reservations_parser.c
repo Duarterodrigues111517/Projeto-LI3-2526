@@ -83,23 +83,9 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
         return 0;
     }
 
-    // assinatura real (8 args):
-    // Reservation *reservation_new(const char *reservation_id,
-    //                              const char *flight_id,
-    //                              int document_number,
-    //                              const char *seat,
-    //                              double price,
-    //                              bool *extra_luggage,
-    //                              bool *priority_boarding,
-    //                              const char *qr_code);
-    Reservation *r = reservation_new(reservation_id,
-                                     flight_id,
-                                     document_number,
-                                     seat,
-                                     price,
-                                     &extra_luggage,
-                                     &priority_boarding,
-                                     qr_code);
+    /* when calling reservation_new, pass bool values, not their addresses */
+    Reservation *r = reservation_new(reservation_id, flight_id, document_number, seat,
+                                     price, extra_luggage, priority_boarding, qr_code);
 
     reservations_manager_add(mgr, r);
     return 1;

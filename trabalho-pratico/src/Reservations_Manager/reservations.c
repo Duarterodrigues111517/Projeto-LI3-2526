@@ -8,15 +8,15 @@ struct Reservation {
     int  document_number;
     char *seat;
     double price;
-    bool *extra_luggage;
-    bool *priority_boarding;
+    bool extra_luggage;
+    bool priority_boarding;
     char *qr_code;     
 };
 
 Reservation *reservation_new ( const char *reservation_id, const char *flight_id,
                              int document_number, const char *seat,
-                             double price, bool *extra_luggage,
-                             bool *priority_boarding, const char *qr_code){
+                             double price, bool extra_luggage,
+                             bool priority_boarding, const char *qr_code){
     if(!reservation_id) return NULL;
     if(price < 0.0) return NULL;
     Reservation *r = calloc(1,sizeof(*r));
@@ -43,8 +43,8 @@ const char *reservation_get_flight_id(const Reservation *r){ return r? r->flight
 int        reservation_get_document_number(const Reservation *r){ return r? r->document_number: 0; }
 const char *reservation_get_seat(const Reservation *r){ return r? r->seat: NULL; }
 double     reservation_get_price(const Reservation *r){ return r? r->price: 0.0; }
-bool       *reservation_get_extra_luggage(const Reservation *r){ return r? r->extra_luggage: NULL; }
-bool       *reservation_get_priority_boarding(const Reservation *r){ return r? r->priority_boarding: NULL; }
+bool       reservation_get_extra_luggage(const Reservation *r){ return r? r->extra_luggage: false; }
+bool       reservation_get_priority_boarding(const Reservation *r){ return r? r->priority_boarding: false; }
 const char *reservation_get_qr_code(const Reservation *r){ return r? r->qr_code: NULL; }
 
 
@@ -78,12 +78,12 @@ bool reservation_set_price(Reservation *r, double price){
     r->price = price;
     return true;
 }
-bool reservation_set_extra_luggage(Reservation *r, bool *extra_luggage){
+bool reservation_set_extra_luggage(Reservation *r, bool extra_luggage){
     if(!r) return false;
     r->extra_luggage = extra_luggage;
     return true;
 }
-bool reservation_set_priority_boarding(Reservation *r, bool *priority_boarding){
+bool reservation_set_priority_boarding(Reservation *r, bool priority_boarding){
     if(!r) return false;
     r->priority_boarding = priority_boarding;
     return true;

@@ -46,6 +46,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 	rm -f $(RESULTS_DIR)/command*_output.txt
+	rm -f resultados/*_errors.csv
 	
 
 clean_obj:
