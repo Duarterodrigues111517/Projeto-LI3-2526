@@ -49,6 +49,10 @@ int main(int argc, char *argv[]) {
     parse_queries(inputFile, airports_table);
 
     airports_manager_free(airports_table);
+    aircrafts_manager_free(aircrafts_mgr);
+    flights_manager_free(flights_mgr);
+    reservations_manager_free(reservations_mgr);
+    passengers_manager_free(passengers_mgr);
 
 
 
