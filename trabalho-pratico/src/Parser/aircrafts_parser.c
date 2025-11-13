@@ -83,7 +83,7 @@ int parse_aircraft_row(GArray *f, const char *raw, const char *header,
     }
 
     // Ajusta a assinatura de criação se o teu Aircraft for diferente
-    Aircraft *a = aircraft_new(identifier, manufacturer, model, year, capacity, range);
+    Aircraft *a = aircraft_new(identifier, model, manufacturer, year, capacity, range);
     aircrafts_manager_add(mgr, a);
     return 1;
 }

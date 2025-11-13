@@ -1,1 +1,3 @@
-DJM,Djambala Airport,Djambala,CG,small_airport
+VH-SBMR0,A320,Airbus,1572
+XU-SG5HF,A220-300,Airbus,1572
+GB-MX780,717-200,Boeing,1571
