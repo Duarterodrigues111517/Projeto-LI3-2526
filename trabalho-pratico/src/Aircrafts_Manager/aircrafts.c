@@ -4,30 +4,41 @@
 
 struct Aircraft {
     char *id;
-    char *model;
     char *manufacturer;
-    int  range;
-    int  year; 
-    int  capacity;
+    char *model;
+    int   year;
+    int   capacity;
+    int   range;
 };
 
-Aircraft *aircraft_new(const char *id, const char *model, const char *manufacturer,
-                       int capacity, int range, int year){
-    if(!id) return NULL;
-    if(capacity < 0) return NULL;
-    Aircraft *a = calloc(1,sizeof(*a));
-    if(!a) return NULL;
+Aircraft *aircraft_new(const char *id,
+                       const char *manufacturer,
+                       const char *model,
+                       int year,
+                       int capacity,
+                       int range)
+{
+    if (!id) return NULL;
+    if (capacity < 0) return NULL;
+
+    Aircraft *a = calloc(1, sizeof(*a));
+    if (!a) return NULL;
+
     a->id = strdup(id);
-    a->model = strdup(model);
     a->manufacturer = strdup(manufacturer);
+    a->model = strdup(model);
+    a->year = year;
     a->capacity = capacity;
     a->range = range;
-    a->year = year;
+
     return a;
 }
+
 void aircraft_free(Aircraft *a){
-    if(!a) return;
-    free(a->id); free(a->model); free(a->manufacturer);
+    if (!a) return;
+    free(a->id);
+    free(a->manufacturer);
+    free(a->model);
     free(a);
 }
 

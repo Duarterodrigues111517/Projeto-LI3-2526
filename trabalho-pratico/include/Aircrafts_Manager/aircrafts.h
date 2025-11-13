@@ -5,8 +5,13 @@
 
 typedef struct Aircraft Aircraft;
 
-Aircraft *aircraft_new(const char *id, const char *model, const char *manufacturer,
-                       int capacity, int range, int year); 
+Aircraft *aircraft_new(const char *id,
+                       const char *manufacturer,
+                       const char *model,
+                       int year,
+                       int capacity,
+                       int range);
+
 void aircraft_free(Aircraft *a);
 
 const char *aircraft_get_id(const Aircraft *a);
