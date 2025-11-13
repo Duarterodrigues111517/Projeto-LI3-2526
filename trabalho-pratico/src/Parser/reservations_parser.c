@@ -41,6 +41,75 @@ static int parse_bool_flex(const char *s, bool *out) {
 }
 
 
+static int parse_flight_ids_list(const char *s, char **out1, char **out2) {
+    *out1 = NULL;
+    *out2 = NULL;
+    if (!s) return 0;
+
+    size_t len = strlen(s);
+    if (len < 2 || s[0] != '[' || s[len-1] != ']') {
+        // tem de começar por '[' e acabar em ']'
+        return 0;
+    }
+
+    // copiar conteúdo entre [ e ]
+    char *inner = strndup(s + 1, len - 2);
+    if (!inner) return 0;
+
+    // remover aspas simples
+    char *p = inner, *q = inner;
+    while (*p) {
+        if (*p != '\'') *q++ = *p;
+        p++;
+    }
+    *q = '\0';
+
+    // separar por vírgulas
+    int count = 0;
+    char *tok = strtok(inner, ",");
+    while (tok) {
+        // trim espaços à esquerda
+        while (isspace((unsigned char)*tok)) tok++;
+        // trim espaços à direita
+        char *end = tok + strlen(tok);
+        while (end > tok && isspace((unsigned char)end[-1])) {
+            end--;
+        }
+        *end = '\0';
+
+        if (*tok != '\0') {
+            if (count == 0) {
+                *out1 = strdup(tok);
+                if (!*out1) { free(inner); return 0; }
+            } else if (count == 1) {
+                *out2 = strdup(tok);
+                if (!*out2) { free(inner); free(*out1); *out1 = NULL; return 0; }
+            } else {
+                // mais de 2 voos → inválido
+                free(inner);
+                free(*out1); free(*out2);
+                *out1 = *out2 = NULL;
+                return 0;
+            }
+            count++;
+        }
+
+        tok = strtok(NULL, ",");
+    }
+
+    free(inner);
+
+    if (count == 0) {
+        // lista vazia → inválido
+        free(*out1); free(*out2);
+        *out1 = *out2 = NULL;
+        return 0;
+    }
+
+    // count == 1 ou 2 é aceite
+    return 1;
+}
+
 int parse_reservation_row(GArray *f, const char *raw, const char *header,
                           ReservationsManager_t *mgr, FILE **errors_fp)
 {
@@ -51,7 +120,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     }
 
     const char *reservation_id    = g_array_index(f, char*, 0);
-    const char *flight_id         = g_array_index(f, char*, 1);
+    const char *flight_ids_field  = g_array_index(f, char*, 1); // agora é lista
     const char *document_s        = g_array_index(f, char*, 2);
     const char *seat              = g_array_index(f, char*, 3);
     const char *price_s           = g_array_index(f, char*, 4);
@@ -59,13 +128,13 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     const char *priority_board_s  = g_array_index(f, char*, 6);
     const char *qr_code           = g_array_index(f, char*, 7);
 
-    // validações sintáticas
     int ok = 1;
+
+    // validações básicas de strings
     ok &= is_valid_reservation_id(reservation_id); // R + 9 dígitos
-    ok &= is_valid_flight_id(flight_id);           // ccdddddd
     ok &= is_valid_document_number(document_s);    // 9 dígitos
     ok &= is_nonempty_str(seat);                   // não vazio
-    ok &= is_nonempty_str(qr_code);                // não vazio (ajusta se quiseres aceitar vazio)
+    ok &= is_nonempty_str(qr_code);                // não vazio (podes relaxar se quiseres)
 
     int document_number = 0;
     double price = 0.0;
@@ -77,15 +146,49 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     if (ok) ok &= parse_bool_flex(extra_luggage_s, &extra_luggage);
     if (ok) ok &= parse_bool_flex(priority_board_s, &priority_boarding);
 
+    // parse e validar lista de flight ids
+    char *flight_id1 = NULL;
+    char *flight_id2 = NULL;
+
+    if (ok) {
+        ok &= parse_flight_ids_list(flight_ids_field, &flight_id1, &flight_id2);
+    }
+
+    if (ok) {
+        // validação sintática de cada flight id individual
+        ok &= is_valid_flight_id(flight_id1);
+        if (flight_id2) ok &= is_valid_flight_id(flight_id2);
+    }
+
     if (!ok) {
+        ensure_errors_file(errors_fp, RESERVATIONS_ERR_PATH, header);
+        if (*errors_fp) fputs(raw, *errors_fp);
+        free(flight_id1);
+        free(flight_id2);
+        return 0;
+    }
+
+    // criar reserva com 1 ou 2 voos
+    Reservation *r = reservation_new(reservation_id,
+                                     flight_id1,
+                                     flight_id2,           // pode ser NULL
+                                     document_number,
+                                     seat,
+                                     price,
+                                     extra_luggage,
+                                     priority_boarding,
+                                     qr_code);
+
+    // já não precisamos das cópias temporárias (o constructor faz strdup)
+    free(flight_id1);
+    free(flight_id2);
+
+    if (!r) {
+        // defesa extra: se algo correu mal na criação, regista como erro
         ensure_errors_file(errors_fp, RESERVATIONS_ERR_PATH, header);
         if (*errors_fp) fputs(raw, *errors_fp);
         return 0;
     }
-
-    /* when calling reservation_new, pass bool values, not their addresses */
-    Reservation *r = reservation_new(reservation_id, flight_id, document_number, seat,
-                                     price, extra_luggage, priority_boarding, qr_code);
 
     reservations_manager_add(mgr, r);
     return 1;

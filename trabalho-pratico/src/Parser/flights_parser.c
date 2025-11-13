@@ -69,6 +69,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 
     ok &= is_valid_datetime(departure);
     ok &= is_valid_datetime(arrival);
+    
 
     // actual_*: se vierem preenchidos (no layout a 12 colunas), têm de ser datas válidas; se "N/A", aceitamos
     if (actual_departure && strcmp(actual_departure, "N/A") != 0)
@@ -78,7 +79,21 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 
     ok &= is_valid_status(status);         // Scheduled | Cancelled | Delayed
     ok &= is_nonempty_str(aircraft);       // não-vazio
-
+    ok &= (compare_datetimes(departure, arrival) < 0); // departure < arrival
+    ok &= (compare_datetimes(actual_departure, actual_arrival) < 0); // actual_departure < actual_arrival
+    if (strcmp(status, "Delayed") == 0) {
+        // actual_departure > departure
+        ok &= (compare_datetimes(actual_departure, departure) > 0);
+        // actual_arrival > arrival
+        ok &= (compare_datetimes(actual_arrival, arrival) > 0);
+    }
+    if (strcmp(status, "Cancelled") == 0) {
+        // actual_departure == "N/A"
+        ok &= (strcmp(actual_departure, "N/A") == 0);
+        // actual_arrival == "N/A"
+        ok &= (strcmp(actual_arrival, "N/A") == 0);
+    }
+     // Se alguma validação falhar, escreve linha de erro
     if (!ok) {
         ensure_errors_file(errors_fp, FLIGHTS_ERR_PATH, header);
         if (*errors_fp) fputs(raw, *errors_fp);
@@ -132,3 +147,5 @@ cleanup:
     fclose(fp);
     return mgr;
 }
+
+

@@ -1,5 +1,5 @@
 #include "Parser/parser_queries.h"
-#include "Queries/querie1.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +8,7 @@
 #define OUTPUT_DIR "resultados/"
 #endif
 
-void parse_queries(const char *path_input, AirportsManager_t *am) {
+void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManager_t *aircrafts, FlightsManager_t *flights) {
     FILE *fp = fopen(path_input, "r");
     if (!fp) {
         perror("Erro ao abrir input.txt");
@@ -46,13 +46,33 @@ void parse_queries(const char *path_input, AirportsManager_t *am) {
             case 1:
                 querie1(args, am, output_path);
                 break;
+        case 2: {
+                    char *saveptr = NULL;
 
-            default: {
-                // Se a query ainda não estiver implementada, cria ficheiro vazio
-                FILE *f = fopen(output_path, "w");
-                if (f) { fputc('\n', f); fclose(f); }
-                break;
-            }
+                    // primeira chamada: usa 'args'
+                    char *n_str = strtok_r(args, " ", &saveptr);
+                    if (!n_str) {
+                        FILE *f = fopen(output_path, "w");
+                        if (f) { fputc('\n', f); fclose(f); }
+                        break;
+                    }
+
+                    int N = atoi(n_str);
+
+                    // resto da linha (pode ser o manufacturer ou nada)
+                    char *manufacturer = strtok_r(NULL, "", &saveptr);
+                    if (manufacturer) {
+                        while (*manufacturer == ' ') manufacturer++;
+                    }
+
+                    querie2(N,
+                            manufacturer && *manufacturer ? manufacturer : NULL,
+                            aircrafts,
+                            flights,
+                            output_path);
+                    break;
+                }
+
         }
     }
 

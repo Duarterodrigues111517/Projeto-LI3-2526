@@ -136,3 +136,10 @@ int is_valid_status(const char *s) {
 int is_valid_country_code(const char *s) {
     return s && strlen(s)==2 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]);
 }
+
+
+
+int compare_datetimes(const char *dt1, const char *dt2) {
+    // returns negative if dt1 < dt2, 0 if equal, positive if dt1 > dt2
+    return strcmp(dt1, dt2);
+}

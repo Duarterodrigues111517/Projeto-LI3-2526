@@ -12,4 +12,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
 
 
 ReservationsManager_t *parse_reservations_file(const char *path);
+
+
 #endif
+

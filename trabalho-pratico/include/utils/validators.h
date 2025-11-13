@@ -50,6 +50,8 @@ int is_valid_list(const char *s);
 int is_valid_class(const char *s);
 int is_valid_flight_id(const char *s);
 
+int compare_datetimes(const char *dt1, const char *dt2); // compara dois datetimes "aaaa-mm-dd hh:mm"
+
 
 
 #endif
