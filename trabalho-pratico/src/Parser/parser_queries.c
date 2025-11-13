@@ -46,27 +46,27 @@ void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManag
             case 1:
                 querie1(args, am, output_path);
                 break;
-        case 2: {
-                    char *saveptr = NULL;
+            case 2: {
+                    char *endptr = NULL;
+                    long n_long = strtol(args, &endptr, 10);
 
-                    // primeira chamada: usa 'args'
-                    char *n_str = strtok_r(args, " ", &saveptr);
-                    if (!n_str) {
+                    if (endptr == args || n_long <= 0) {
+                        // não foi possível ler N -> ficheiro vazio
                         FILE *f = fopen(output_path, "w");
                         if (f) { fputc('\n', f); fclose(f); }
                         break;
                     }
 
-                    int N = atoi(n_str);
+                    int N = (int)n_long;
 
-                    // resto da linha (pode ser o manufacturer ou nada)
-                    char *manufacturer = strtok_r(NULL, "", &saveptr);
-                    if (manufacturer) {
-                        while (*manufacturer == ' ') manufacturer++;
-                    }
+                    // saltar espaços depois de N
+                    while (*endptr == ' ' || *endptr == '\t') endptr++;
+
+                    // se ainda houver texto, é o manufacturer; senão, não há filtro
+                    const char *manufacturer = (*endptr != '\0') ? endptr : NULL;
 
                     querie2(N,
-                            manufacturer && *manufacturer ? manufacturer : NULL,
+                            manufacturer,
                             aircrafts,
                             flights,
                             output_path);

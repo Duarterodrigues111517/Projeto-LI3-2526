@@ -58,3 +58,18 @@ Flight *flights_manager_get(const FlightsManager_t *fm, const char *id) {
     if (!fm || !id) return NULL;
     return (Flight *)g_hash_table_lookup(fm->flights_table, id);
 }
+
+
+void flights_manager_foreach(FlightsManager_t *fm,
+                             void (*fn)(Flight *f, void *user_data),
+                             void *user_data)
+{
+    if (!fm || !fn) return;
+
+    GList *values = g_hash_table_get_values(fm->flights_table);
+    for (GList *l = values; l != NULL; l = l->next) {
+        Flight *f = (Flight *)l->data;
+        if (f) fn(f, user_data);
+    }
+    g_list_free(values);
+}
