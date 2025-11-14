@@ -16,7 +16,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
                      FlightsManager_t *mgr, FILE **errors_fp)
 {
     const int n = (int)f->len;
-    if (n != 7 && n != 12) {
+    if (n != 12) {
         ensure_errors_file(errors_fp, FLIGHTS_ERR_PATH, header);
         if (*errors_fp) fputs(raw, *errors_fp);
         return 0;
@@ -36,16 +36,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     const char *airline          = "";
     const char *tracking_url     = "";
 
-    if (n == 7) {
-        id          = g_array_index(f, char*, 0);
-        aircraft    = g_array_index(f, char*, 1);
-        origin      = g_array_index(f, char*, 2);
-        destination = g_array_index(f, char*, 3);
-        departure   = g_array_index(f, char*, 4);
-        arrival     = g_array_index(f, char*, 5);
-        status      = g_array_index(f, char*, 6);
-        // actual_* = "N/A", gate/airline/tracking_url = "" (defaults acima)
-    } else { // n == 12
+    // n == 12
         id               = g_array_index(f, char*, 0);
         departure        = g_array_index(f, char*, 1);
         actual_departure = g_array_index(f, char*, 2);
@@ -58,7 +49,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
         aircraft         = g_array_index(f, char*, 9);
         airline          = g_array_index(f, char*, 10);
         tracking_url     = g_array_index(f, char*, 11);
-    }
+    
 
     // -------- Validações sintáticas -----------
     int ok = 1;
@@ -77,21 +68,31 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)
         ok &= is_valid_datetime(actual_arrival);
 
-    ok &= is_valid_status(status);         // Scheduled | Cancelled | Delayed
-    ok &= is_nonempty_str(aircraft);       // não-vazio
-    ok &= (compare_datetimes(departure, arrival) < 0); // departure < arrival
-    ok &= (compare_datetimes(actual_departure, actual_arrival) < 0); // actual_departure < actual_arrival
-    if (strcmp(status, "Delayed") == 0) {
-        // actual_departure > departure
-        ok &= (compare_datetimes(actual_departure, departure) > 0);
-        // actual_arrival > arrival
-        ok &= (compare_datetimes(actual_arrival, arrival) > 0);
-    }
+    ok &= is_valid_status(status);
+    ok &= is_valid_aircraft_code(aircraft);
+    ok &= (compare_datetimes(departure, arrival) < 0); // isto é sempre verdade, mesmo se Cancelled
+
     if (strcmp(status, "Cancelled") == 0) {
-        // actual_departure == "N/A"
-        ok &= (strcmp(actual_departure, "N/A") == 0);
-        // actual_arrival == "N/A"
-        ok &= (strcmp(actual_arrival, "N/A") == 0);
+        // Para voos cancelados, actual_* têm de ser "N/A"
+        ok &= (actual_departure != NULL && strcmp(actual_departure, "N/A") == 0);
+        ok &= (actual_arrival   != NULL && strcmp(actual_arrival,   "N/A") == 0);
+    }
+    else {
+        // Para voos não cancelados:
+
+        // Se não são "N/A", têm de ser datetimes válidos (já tinhas isto antes)
+        if (actual_departure && strcmp(actual_departure, "N/A") != 0)
+            ok &= is_valid_datetime(actual_departure);
+        if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)
+            ok &= is_valid_datetime(actual_arrival);
+
+        // E agora sim faz sentido comparar
+        ok &= (compare_datetimes(actual_departure, actual_arrival) < 0);
+
+        if (strcmp(status, "Delayed") == 0) {
+            ok &= (compare_datetimes(actual_departure, departure) > 0);
+            ok &= (compare_datetimes(actual_arrival,   arrival)   > 0);
+        }
     }
      // Se alguma validação falhar, escreve linha de erro
     if (!ok) {
