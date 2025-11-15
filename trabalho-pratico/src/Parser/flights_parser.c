@@ -12,8 +12,14 @@ static void ensure_errors_file(FILE **fp, const char *path, const char *header) 
     if (*fp) fputs(header, *fp); // header ainda tem '\n'
 }
 
+static int is_aircraft_valid(const AircraftsManager_t *acm, const char *aircraft_id) {
+    if (!acm || !aircraft_id) return 0;
+    Aircraft *a = aircrafts_manager_get(acm, aircraft_id);
+    return (a != NULL);
+}
+
 int parse_flight_row(GArray *f, const char *raw, const char *header,
-                     FlightsManager_t *mgr, FILE **errors_fp)
+                     FlightsManager_t *mgr, AircraftsManager_t *a_mgr,FILE **errors_fp)
 {
     const int n = (int)f->len;
     if (n != 12) {
@@ -69,8 +75,8 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
         ok &= is_valid_datetime(actual_arrival);
 
     ok &= is_valid_status(status);
-    ok &= is_valid_aircraft_code(aircraft);
     ok &= (compare_datetimes(departure, arrival) < 0); // isto é sempre verdade, mesmo se Cancelled
+    ok &= is_aircraft_valid(a_mgr,aircraft);
 
     if (strcmp(status, "Cancelled") == 0) {
         // Para voos cancelados, actual_* têm de ser "N/A"
@@ -120,7 +126,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 }
 
 
-FlightsManager_t *parse_flights_file(const char *csvPath) {
+FlightsManager_t *parse_flights_file(const char *csvPath, AircraftsManager_t *a_mgr) {
     FILE *fp = fopen(csvPath, "r");
     if (!fp) { perror("flights.csv"); return flights_manager_new(); }
 
@@ -136,7 +142,7 @@ FlightsManager_t *parse_flights_file(const char *csvPath) {
     free(raw); raw = NULL;
 
     while (process_line(fp, fields, &raw)) {
-        parse_flight_row(fields, raw, header, mgr, &errors_fp);
+        parse_flight_row(fields, raw, header, mgr,a_mgr, &errors_fp);
         free(raw); raw = NULL;
     }
 

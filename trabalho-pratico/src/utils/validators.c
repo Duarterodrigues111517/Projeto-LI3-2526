@@ -144,21 +144,4 @@ int compare_datetimes(const char *dt1, const char *dt2) {
     return strcmp(dt1, dt2);
 }
 
-int is_valid_aircraft_code(const char *s) {
-    if (!s || !*s) return 0;
 
-    // no leading/trailing spaces
-    if (s[0] == ' ' || s[strlen(s) - 1] == ' ')
-        return 0;
-
-    // no spaces inside, only letters, digits and '-'
-    for (const char *p = s; *p; p++) {
-        if (!((*p >= 'A' && *p <= 'Z') ||
-              (*p >= '0' && *p <= '9') ||
-              (*p == '-'))) {
-            return 0;
-        }
-    }
-
-    return 1;
-}

@@ -60,13 +60,6 @@ static void count_departures_cb(Flight *f, void *user_data) {
         g_hash_table_insert(counts, g_strdup(origin), cnt);
     }
 
-// DEBUG PRINT (coloquei para tentar ter 100% na linha 80 dos testes)
-printf("[Q3-COUNT] id=%s | origin=%s | status=%s | actual_dep=%s\n",
-       flight_get_id(f),
-       origin,
-       status,
-       actual_dep);
-    (*cnt)++;
 }
 
 void querie3(const char *start_date,

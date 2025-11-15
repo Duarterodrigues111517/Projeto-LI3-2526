@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     (void)airports_table; // remove depois de usar
     AircraftsManager_t *aircrafts_mgr = parse_aircrafts_file(aircrafts_file);
     (void)aircrafts_mgr;
-    FlightsManager_t *flights_mgr = parse_flights_file(flights_file);
+    FlightsManager_t *flights_mgr = parse_flights_file(flights_file, aircrafts_mgr);
     (void)flights_mgr;
     ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file);
     (void)reservations_mgr;

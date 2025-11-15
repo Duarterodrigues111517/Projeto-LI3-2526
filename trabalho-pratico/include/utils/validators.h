@@ -52,7 +52,7 @@ int is_valid_flight_id(const char *s);
 
 int compare_datetimes(const char *dt1, const char *dt2); // compara dois datetimes "aaaa-mm-dd hh:mm"
 
-int is_valid_aircraft_code(const char *s); // ex: "A320", "B737"
+
 
 
 #endif

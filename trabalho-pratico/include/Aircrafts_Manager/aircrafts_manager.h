@@ -3,7 +3,6 @@
 
 
 #include "aircrafts.h"
-#include "../utils/pool.h"
 #include <glib.h>
 
 typedef struct AircraftsManager AircraftsManager_t;
