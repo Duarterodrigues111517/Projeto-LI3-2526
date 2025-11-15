@@ -59,7 +59,7 @@ static void count_departures_cb(Flight *f, void *user_data) {
         *cnt = 0;
         g_hash_table_insert(counts, g_strdup(origin), cnt);
     }
-
+    (*cnt)++; 
 }
 
 void querie3(const char *start_date,

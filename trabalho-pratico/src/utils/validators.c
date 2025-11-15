@@ -18,6 +18,8 @@ static int parse_int2(const char *p, int n, int *out) {
     *out = v; return 1;
 }
 
+// datas
+
 static int not_future_date(int Y,int M,int D) {
     // Spec: consider current date = 2025/09/30
     if (Y>2025) return 0;
@@ -30,7 +32,7 @@ int is_valid_date(const char *s) {
     if (!s || strlen(s)!=10) return 0;
     if (s[4]!='-'||s[7]!='-') return 0;
     int Y,M,D;
-    if (!parse_int2(s,4,&Y)) return 0;            // uses only 2 but ok: adjust to 4-digit parse
+    if (!parse_int2(s,4,&Y)) return 0;
     // (for brevity, implement a parse_intN for 4 digits)
     Y = (s[0]-'0')*1000+(s[1]-'0')*100+(s[2]-'0')*10+(s[3]-'0');
     M = (s[5]-'0')*10+(s[6]-'0');
@@ -56,6 +58,8 @@ int is_valid_datetime(const char *s) {
     return 1;
 }
 
+// email
+
 int is_valid_email(const char *e) {
     if (!e) return 0;
     const char *at = strchr(e,'@'); if (!at) return 0;
@@ -72,10 +76,14 @@ int is_valid_email(const char *e) {
     return 1;
 }
 
+// tipo de aeroporto
+
 int is_valid_airport_type(const char *t) {
     return t && (!strcmp(t,"small_airport")||!strcmp(t,"medium_airport")||
                  !strcmp(t,"large_airport")||!strcmp(t,"heliport")||!strcmp(t,"seaplane_base"));
 }
+
+// latitude / longitude
 
 static int is_valid_decimal_in_range(const char *s, int maxAbsDeg, int maxIntDigits) {
     if (!s || !*s) return 0;
@@ -96,11 +104,15 @@ static int is_valid_decimal_in_range(const char *s, int maxAbsDeg, int maxIntDig
 int is_valid_lat(const char *s){ return is_valid_decimal_in_range(s, 90, 2); }
 int is_valid_lon(const char *s){ return is_valid_decimal_in_range(s,180, 3); }
 
+// flight ID
+
 int is_valid_flight_id(const char *s) {
     if (!s || strlen(s)!=7) return 0;
     return (s[0]>='A'&&s[0]<='Z') && (s[1]>='A'&&s[1]<='Z') &&
            all_digits(s+2);
 }
+
+// reservation ID
 
 int is_valid_reservation_id(const char *s) {
     return s && strlen(s)==10 && s[0]=='R' && all_digits(s+1);
@@ -110,20 +122,28 @@ int is_valid_document_number(const char *s) {
     return s && strlen(s)==9 && all_digits(s);
 }
 
+// género
+
 int is_valid_gender(const char *s) {
     return s && (!strcmp(s,"M")||!strcmp(s,"F")||!strcmp(s,"O"));
 }
+
+// lista entre []
 
 int is_valid_bracket_list(const char *s) {
     size_t n = s? strlen(s):0;
     return n>=2 && s[0]=='[' && s[n-1]==']';
 }
 
+// string não vazia 
+
 int is_nonempty_str(const char *s) {
     if (!s) return 0;
     while (*s && isspace((unsigned char)*s)) s++;
     return *s != '\0';
 }
+
+// status do voo
 
 int is_valid_status(const char *s) {
     return s && (
@@ -133,15 +153,36 @@ int is_valid_status(const char *s) {
     );
 }
 
+// código de país 
+
 int is_valid_country_code(const char *s) {
     return s && strlen(s)==2 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]);
 }
 
-
+// comparação de datetimes
 
 int compare_datetimes(const char *dt1, const char *dt2) {
     // returns negative if dt1 < dt2, 0 if equal, positive if dt1 > dt2
     return strcmp(dt1, dt2);
 }
 
+// código da aircraft 
 
+int is_valid_aircraft_code(const char *s) {
+    if (!s || !*s) return 0;
+
+    // sem espaços à frente/atrás
+    size_t len = strlen(s);
+    if (s[0] == ' ' || s[len-1] == ' ')
+        return 0;
+
+    // apenas letras maiúsculas, dígitos e '-'
+    for (const char *p = s; *p; p++) {
+        if (!((*p >= 'A' && *p <= 'Z') ||
+              (*p >= '0' && *p <= '9') ||
+              (*p == '-'))) {
+            return 0;
+        }
+    }
+    return 1;
+}
