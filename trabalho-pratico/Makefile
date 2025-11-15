@@ -6,6 +6,8 @@ SRC_DIR = src
 INC_DIR = include
 OBJ_DIR = obj
 
+RESULTS_DIR = resultados
+
 MAIN_EXEC   = programa-principal
 TEST_EXEC   = programa-testes
 PARSER_EXEC = test_parser
