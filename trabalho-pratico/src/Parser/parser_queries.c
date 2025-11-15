@@ -1,5 +1,5 @@
 #include "Parser/parser_queries.h"
-
+#include "Queries/querie3.h"  
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +8,10 @@
 #define OUTPUT_DIR "resultados/"
 #endif
 
-void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManager_t *aircrafts, FlightsManager_t *flights) {
+void parse_queries(const char *path_input,
+                   AirportsManager_t *am,
+                   AircraftsManager_t *aircrafts,
+                   FlightsManager_t *flights) {
     FILE *fp = fopen(path_input, "r");
     if (!fp) {
         perror("Erro ao abrir input.txt");
@@ -24,7 +27,8 @@ void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManag
         line_no++;
 
         // Remover \n / \r do fim
-        while (n > 0 && (line[n - 1] == '\n' || line[n - 1] == '\r')) line[--n] = '\0';
+        while (n > 0 && (line[n - 1] == '\n' || line[n - 1] == '\r'))
+            line[--n] = '\0';
 
         // Ignorar linhas vazias
         char *ptr = line;
@@ -33,7 +37,8 @@ void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManag
 
         // Construir nome do ficheiro de output
         char output_path[256];
-        snprintf(output_path, sizeof(output_path), OUTPUT_DIR "command%lu_output.txt", line_no);
+        snprintf(output_path, sizeof(output_path),
+                 OUTPUT_DIR "command%lu_output.txt", line_no);
 
         // Extrair número da query
         char *args = NULL;
@@ -46,33 +51,62 @@ void parse_queries(const char *path_input, AirportsManager_t *am, AircraftsManag
             case 1:
                 querie1(args, am, output_path);
                 break;
+
             case 2: {
-                    char *endptr = NULL;
-                    long n_long = strtol(args, &endptr, 10);
+                char *endptr = NULL;
+                long n_long = strtol(args, &endptr, 10);
 
-                    if (endptr == args || n_long <= 0) {
-                        // não foi possível ler N -> ficheiro vazio
-                        FILE *f = fopen(output_path, "w");
-                        if (f) { fputc('\n', f); fclose(f); }
-                        break;
+                if (endptr == args || n_long <= 0) {
+                    // não foi possível ler N -> ficheiro vazio
+                    FILE *f = fopen(output_path, "w");
+                    if (f) {
+                        fputc('\n', f);
+                        fclose(f);
                     }
-
-                    int N = (int)n_long;
-
-                    // saltar espaços depois de N
-                    while (*endptr == ' ' || *endptr == '\t') endptr++;
-
-                    // se ainda houver texto, é o manufacturer; senão, não há filtro
-                    const char *manufacturer = (*endptr != '\0') ? endptr : NULL;
-
-                    querie2(N,
-                            manufacturer,
-                            aircrafts,
-                            flights,
-                            output_path);
                     break;
                 }
 
+                int N = (int)n_long;
+
+                // saltar espaços depois de N
+                while (*endptr == ' ' || *endptr == '\t') endptr++;
+
+                // se ainda houver texto, é o manufacturer; senão, não há filtro
+                const char *manufacturer = (*endptr != '\0') ? endptr : NULL;
+
+                querie2(N, manufacturer, aircrafts, flights, output_path);
+                break;
+            }
+
+            case 3: {
+                // Q3: 3 <data_inicial> <data_final>
+                // usar strtok para separar datas
+                char *start_date = strtok(args, " \t");
+                char *end_date   = strtok(NULL, " \t");
+
+                if (!start_date || !end_date) {
+                    // argumentos insuficientes -> ficheiro vazio
+                    FILE *f = fopen(output_path, "w");
+                    if (f) {
+                        fputc('\n', f);
+                        fclose(f);
+                    }
+                    break;
+                }
+
+                querie3(start_date, end_date, am, flights, output_path);
+                break;
+            }
+
+            default: {
+                // query desconhecida -> ficheiro vazio
+                FILE *f = fopen(output_path, "w");
+                if (f) {
+                    fputc('\n', f);
+                    fclose(f);
+                }
+                break;
+            }
         }
     }
 
