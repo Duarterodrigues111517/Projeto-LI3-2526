@@ -40,7 +40,6 @@ static int parse_bool_flex(const char *s, bool *out) {
     return 0;
 }
 
-
 static int parse_flight_ids_list(const char *s, char **out1, char **out2) {
     *out1 = NULL;
     *out2 = NULL;
@@ -111,7 +110,10 @@ static int parse_flight_ids_list(const char *s, char **out1, char **out2) {
 }
 
 int parse_reservation_row(GArray *f, const char *raw, const char *header,
-                          ReservationsManager_t *mgr, FILE **errors_fp)
+                          ReservationsManager_t *mgr,
+                          FlightsManager_t *fl_mgr,
+                          PassengersManager_t *p_mgr,
+                          FILE **errors_fp)
 {
     if (f->len != 8) {
         ensure_errors_file(errors_fp, RESERVATIONS_ERR_PATH, header);
@@ -134,7 +136,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     ok &= is_valid_reservation_id(reservation_id); // R + 9 dígitos
     ok &= is_valid_document_number(document_s);    // 9 dígitos
     ok &= is_nonempty_str(seat);                   // não vazio
-    ok &= is_nonempty_str(qr_code);                // não vazio (podes relaxar se quiseres)
+    ok &= is_nonempty_str(qr_code);                // não vazio
 
     int document_number = 0;
     double price = 0.0;
@@ -158,6 +160,37 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
         // validação sintática de cada flight id individual
         ok &= is_valid_flight_id(flight_id1);
         if (flight_id2) ok &= is_valid_flight_id(flight_id2);
+    }
+
+    // -------- validações LÓGICAS com os managers --------
+    if (ok) {
+        // 1) flight ids têm de existir em flights_manager
+        Flight *f1 = flights_manager_get(fl_mgr, flight_id1);
+        Flight *f2 = NULL;
+
+        if (!f1) {
+            ok = 0;
+        }
+
+        if (ok && flight_id2) {
+            f2 = flights_manager_get(fl_mgr, flight_id2);
+            if (!f2) ok = 0;
+        }
+
+        // 2) document number tem de existir em passengers_manager
+        if (ok) {
+            Passenger *p = passengers_manager_get(p_mgr, document_s);
+            if (!p) ok = 0;
+        }
+
+        // 3) se houver 2 voos, destino do 1º = origem do 2º
+        if (ok && flight_id2 && f1 && f2) {
+            const char *dest1 = flight_get_destination(f1);
+            const char *orig2 = flight_get_origin(f2);
+            if (!dest1 || !orig2 || strcmp(dest1, orig2) != 0) {
+                ok = 0;
+            }
+        }
     }
 
     if (!ok) {
@@ -194,9 +227,11 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     return 1;
 }
 
-
-ReservationsManager_t *parse_reservations_file(const char *path) {
-   ReservationsManager_t *mgr = reservations_manager_new();
+ReservationsManager_t *parse_reservations_file(const char *path,
+                                               FlightsManager_t *fl_mgr,
+                                               PassengersManager_t *p_mgr)
+{
+    ReservationsManager_t *mgr = reservations_manager_new();
     FILE *fp = fopen(path, "r");
     if (!fp) { perror("reservations.csv"); return mgr; }
 
@@ -210,7 +245,7 @@ ReservationsManager_t *parse_reservations_file(const char *path) {
     free(raw); raw = NULL;
 
     while (process_line(fp, fields, &raw)) {
-        parse_reservation_row(fields, raw, header, mgr, &errors_fp);
+        parse_reservation_row(fields, raw, header, mgr, fl_mgr, p_mgr, &errors_fp);
         free(raw); raw = NULL;
     }
 
@@ -222,4 +257,3 @@ cleanup:
     fclose(fp);
     return mgr;
 }
-

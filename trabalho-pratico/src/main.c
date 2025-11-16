@@ -41,10 +41,10 @@ int main(int argc, char *argv[]) {
     (void)aircrafts_mgr;
     FlightsManager_t *flights_mgr = parse_flights_file(flights_file, aircrafts_mgr);
     (void)flights_mgr;
-    ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file);
-    (void)reservations_mgr;
     PassengersManager_t *passengers_mgr = parse_passengers_file(passengers_file);
     (void)passengers_mgr;
+    ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file, flights_mgr, passengers_mgr);
+    (void)reservations_mgr;
 
     parse_queries(inputFile, airports_table, aircrafts_mgr, flights_mgr);
 
