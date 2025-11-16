@@ -9,7 +9,7 @@
 static void ensure_errors_file(FILE **fp, const char *path, const char *header) {
     if (*fp) return;
     *fp = fopen(path, "w");
-    if (*fp) fputs(header, *fp); // header ainda tem '\n'
+    if (*fp) fputs(header, *fp); 
 }
 
 
@@ -35,12 +35,12 @@ int parse_passenger_row(GArray *f, const char *raw, const char *header,
 
     // validações sintáticas básicas
     int ok = 1;
-    ok &= is_valid_document_number(document_number); // 9 dígitos
+    ok &= is_valid_document_number(document_number); 
     ok &= is_nonempty_str(first_name);
     ok &= is_nonempty_str(last_name);
-    ok &= is_valid_date(dob);                        // aaaa-mm-dd
+    ok &= is_valid_date(dob);                        
     ok &= is_nonempty_str(nationality);
-    ok &= is_valid_gender(gender);                   // M|F|O
+    ok &= is_valid_gender(gender);                   
     ok &= is_valid_email(email);
     ok &= is_nonempty_str(phone);
     ok &= is_nonempty_str(adress);

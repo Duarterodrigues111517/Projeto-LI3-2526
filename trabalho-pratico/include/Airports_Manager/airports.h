@@ -22,7 +22,7 @@ const char *airport_get_type(const Airport *a);
 double airport_get_latitude(const Airport *a);
 double airport_get_longitude(const Airport *a);
 
-// Setters (retornam false se input inválido)
+// Setters 
 bool airport_set_code(Airport *a, const char *code);
 bool airport_set_name(Airport *a, const char *name);
 bool airport_set_city(Airport *a, const char *city);

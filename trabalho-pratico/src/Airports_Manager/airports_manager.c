@@ -30,7 +30,7 @@ AirportsManager_t *airports_manager_new(void) {
     return am;
 }
 
-// LIberta a memoria
+// Liberta a memoria
 void airports_manager_free(AirportsManager_t *am) {
     if (!am) return;
     g_hash_table_destroy(am->airports_table);

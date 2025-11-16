@@ -75,8 +75,6 @@ void parse_queries(const char *path_input,
             }
 
             case 3: {
-                // Q3: 3 <data_inicial> <data_final>
-                // usar strtok para separar datas
                 char *start_date = strtok(args, " \t");
                 char *end_date   = strtok(NULL, " \t");
 

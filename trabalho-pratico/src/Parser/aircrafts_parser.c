@@ -10,7 +10,7 @@
 static void ensure_errors_file(FILE **fp, const char *path, const char *header) {
     if (*fp) return;
     *fp = fopen(path, "w");
-    if (*fp) fputs(header, *fp); // header já inclui '\n'
+    if (*fp) fputs(header, *fp); 
 }
 
 // Inteiro estrito 
@@ -38,7 +38,7 @@ static int is_nonempty(const char *s) {
     return *s != '\0';
 }
 
-// yyyy e não no futuro (ajusta CURRENT_YEAR se necessário)
+
 #define CURRENT_YEAR 2025
 static int is_valid_year_yyyy(const char *s, int *out) {
     if (!s || strlen(s) != 4 || !is_all_digits(s)) return 0;
@@ -82,7 +82,6 @@ int parse_aircraft_row(GArray *f, const char *raw, const char *header,
         return 0;
     }
 
-    // Ajusta a assinatura de criação se o teu Aircraft for diferente
     Aircraft *a = aircraft_new(identifier, manufacturer, model, year, capacity, range);
     aircrafts_manager_add(mgr, a);
     return 1;

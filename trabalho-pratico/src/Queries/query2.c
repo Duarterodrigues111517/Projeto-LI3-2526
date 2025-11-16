@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Estrutura auxiliar para ordenar resultados
 typedef struct {
     Aircraft *aircraft;
     int flight_count;
@@ -33,7 +32,7 @@ static void count_flights_cb(Flight *f, void *user_data) {
     int *cnt = g_hash_table_lookup(counts, aircraft_id);
     if (!cnt) {
         cnt = g_new(int, 1);
-        if (!cnt) return; // sem memória; em contexto real podias tratar melhor
+        if (!cnt) return; 
         *cnt = 0;
         g_hash_table_insert(counts, g_strdup(aircraft_id), cnt);
     }
@@ -64,8 +63,6 @@ void querie2(int N,
              FlightsManager_t *fm,
              const char *output_path)
 {
-    // Segurança básica: se algo está marado, cria ficheiro vazio para
-    // não falhar completamente a query.
     if (!output_path) return;
 
     FILE *f = fopen(output_path, "w");
@@ -75,18 +72,16 @@ void querie2(int N,
     }
 
     if (N <= 0 || !acm || !fm) {
-        // Query sem sentido -> ficheiro com linha vazia
         fputc('\n', f);
         fclose(f);
         return;
     }
 
-    // Tabela: aircraft_id -> int* (contagem de voos não cancelados)
     GHashTable *counts = g_hash_table_new_full(
         g_str_hash,
         g_str_equal,
-        g_free,   // free da key (g_strdup)
-        g_free    // free do int*
+        g_free,   
+        g_free    
     );
 
     if (!counts) {
@@ -95,7 +90,7 @@ void querie2(int N,
         return;
     }
 
-    // 1) Contar voos não cancelados por aeronave
+    // Contar voos não cancelados por aeronave
     flights_manager_foreach(fm, count_flights_cb, counts);
 
     if (g_hash_table_size(counts) == 0) {
@@ -106,7 +101,7 @@ void querie2(int N,
         return;
     }
 
-    // 2) Transformar hash em array de entradas, aplicando filtro por manufacturer (se existir)
+    // Transformar hash em array de entradas, aplicando filtro por manufacturer (se existir)
     int max_entries = g_hash_table_size(counts);
     Q2Entry *entries = malloc(sizeof(Q2Entry) * max_entries);
     if (!entries) {
@@ -150,10 +145,10 @@ void querie2(int N,
         return;
     }
 
-    // 3) Ordenar resultados
+    // Ordenar resultados
     qsort(entries, used, sizeof(Q2Entry), cmp_q2entry);
 
-    // 4) Escrever no ficheiro até N linhas
+    // Escrever no ficheiro até N linhas
     if (N > used) N = used;
 
     for (int i = 0; i < N; i++) {
@@ -174,7 +169,7 @@ void querie2(int N,
                 entries[i].flight_count);
     }
 
-    // 5) Limpeza
+    // Limpeza
     free(entries);
     g_hash_table_destroy(counts);
     fclose(f);

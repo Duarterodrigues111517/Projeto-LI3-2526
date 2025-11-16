@@ -4,8 +4,8 @@
 
 struct Reservation {
     char *reservation_id;
-    char *flight_ids[2];   // até 2 voos
-    int   flights_count;   // 1 ou 2
+    char *flight_ids[2];   
+    int   flights_count;   
     int  document_number;
     char *seat;
     double price;
@@ -17,7 +17,7 @@ struct Reservation {
 
 Reservation *reservation_new(const char *reservation_id,
                              const char *flight_id1,
-                             const char *flight_id2,   // pode ser NULL
+                             const char *flight_id2,   
                              int document_number,
                              const char *seat,
                              double price,

@@ -8,7 +8,7 @@ typedef struct Reservation Reservation;
 // Construção / destruição
 Reservation *reservation_new(const char *reservation_id,
                              const char *flight_id1,
-                             const char *flight_id2,   // pode ser NULL
+                             const char *flight_id2,   
                              int document_number,
                              const char *seat,
                              double price,
@@ -27,7 +27,8 @@ double     reservation_get_price(const Reservation *r);
 bool       reservation_get_extra_luggage(const Reservation *r);
 bool       reservation_get_priority_boarding(const Reservation *r);
 const char *reservation_get_qr_code(const Reservation *r);
-// Setters (retornam false se input inválido)
+
+// Setters 
 bool reservation_set_reservation_id(Reservation *r, const char *reservation_id);
 bool reservation_set_flights(Reservation *r, const char *flight_id1, const char *flight_id2);
 bool reservation_set_document_number(Reservation *r, int document_number);

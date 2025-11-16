@@ -5,11 +5,11 @@
 
 #define FLIGHTS_ERR_PATH "resultados/flights_errors.csv"
 
-// igual ao airports_parser: cria o ficheiro de erros só quando necessário
+// igual ao airports_parser
 static void ensure_errors_file(FILE **fp, const char *path, const char *header) {
     if (*fp) return;
     *fp = fopen(path, "w");
-    if (*fp) fputs(header, *fp); // header ainda tem '\n'
+    if (*fp) fputs(header, *fp); 
 }
 
 static int is_aircraft_valid(const AircraftsManager_t *acm, const char *aircraft_id) {
@@ -28,7 +28,6 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
         return 0;
     }
 
-    // Campos normalizados (o que vamos passar ao flight_new)
     const char *id               = NULL;
     const char *departure        = NULL;
     const char *actual_departure = "N/A";
@@ -42,7 +41,6 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     const char *airline          = "";
     const char *tracking_url     = "";
 
-    // n == 12
         id               = g_array_index(f, char*, 0);
         departure        = g_array_index(f, char*, 1);
         actual_departure = g_array_index(f, char*, 2);
@@ -67,26 +65,22 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     ok &= is_valid_datetime(departure);
     ok &= is_valid_datetime(arrival);
     
-
-    // actual_*: se vierem preenchidos (no layout a 12 colunas), têm de ser datas válidas; se "N/A", aceitamos
     if (actual_departure && strcmp(actual_departure, "N/A") != 0)
         ok &= is_valid_datetime(actual_departure);
     if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)
         ok &= is_valid_datetime(actual_arrival);
 
     ok &= is_valid_status(status);
-    ok &= (compare_datetimes(departure, arrival) < 0); // isto é sempre verdade, mesmo se Cancelled
+    ok &= (compare_datetimes(departure, arrival) < 0); 
     ok &= is_aircraft_valid(a_mgr,aircraft);
 
     if (strcmp(status, "Cancelled") == 0) {
-        // Para voos cancelados, actual_* têm de ser "N/A"
         ok &= (actual_departure != NULL && strcmp(actual_departure, "N/A") == 0);
         ok &= (actual_arrival   != NULL && strcmp(actual_arrival,   "N/A") == 0);
     }
     else {
         // Para voos não cancelados:
 
-        // Se não são "N/A", têm de ser datetimes válidos
         if (actual_departure && strcmp(actual_departure, "N/A") != 0)
             ok &= is_valid_datetime(actual_departure);
         if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)

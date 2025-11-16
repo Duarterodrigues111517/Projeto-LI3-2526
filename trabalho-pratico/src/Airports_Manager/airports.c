@@ -4,12 +4,12 @@
 #include <ctype.h>
 
 struct Airport {
-    char   *code;     // IATA (3 letras)
+    char   *code;     
     char   *name;
     char   *city;
     char   *country;
-    char   *icao;    // ICAO (4 letras) 
-    char   *type;     // ex: large, medium, small, heliport...
+    char   *icao;    
+    char   *type;     
     double latitude;
     double longitude;
 };

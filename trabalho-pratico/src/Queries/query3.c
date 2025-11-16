@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Estrutura de contexto para o foreach dos voos */
+
 typedef struct {
-    const char *start_date;  // "YYYY-MM-DD"
-    const char *end_date;    // "YYYY-MM-DD"
-    GHashTable *counts;      // key: airport code (char*) ; value: int*
+    const char *start_date;  
+    const char *end_date;    
+    GHashTable *counts;      
 } Q3Context;
 
 static int datetime_in_range(const char *datetime,
@@ -26,10 +26,6 @@ static int datetime_in_range(const char *datetime,
     return (cmp_start >= 0 && cmp_end <= 0);
 }
 
-/**
- * Callback usado em flights_manager_foreach
- * Conta partidas NÃO canceladas por aeroporto de origem, num intervalo de datas.
- */
 static void count_departures_cb(Flight *f, void *user_data) {
     if (!f || !user_data) return;
 
@@ -55,7 +51,7 @@ static void count_departures_cb(Flight *f, void *user_data) {
     int *cnt = g_hash_table_lookup(counts, origin);
     if (!cnt) {
         cnt = g_new(int, 1);
-        if (!cnt) return; // sem memória
+        if (!cnt) return; 
         *cnt = 0;
         g_hash_table_insert(counts, g_strdup(origin), cnt);
     }
@@ -68,7 +64,6 @@ void querie3(const char *start_date,
              FlightsManager_t *fm,
              const char *output_path)
 {
-    // Segurança básica: se algo está marado, cria ficheiro vazio
     if (!output_path) return;
 
     FILE *f = fopen(output_path, "w");
@@ -84,12 +79,11 @@ void querie3(const char *start_date,
         return;
     }
 
-    // Tabela: airport_code -> int* (contagem de partidas)
     GHashTable *counts = g_hash_table_new_full(
         g_str_hash,
         g_str_equal,
-        g_free,   // free da key (g_strdup)
-        g_free    // free do int*
+        g_free,   
+        g_free    
     );
 
     if (!counts) {
@@ -104,7 +98,7 @@ void querie3(const char *start_date,
         .counts     = counts
     };
 
-    // 1) Contar partidas não canceladas, no intervalo de datas
+    // Contar partidas não canceladas, no intervalo de datas
     flights_manager_foreach(fm, count_departures_cb, &ctx);
 
     if (g_hash_table_size(counts) == 0) {
@@ -115,8 +109,7 @@ void querie3(const char *start_date,
         return;
     }
 
-    // 2) Encontrar o aeroporto com mais partidas.
-    //    Em empate, código menor em ordem lexicográfica.
+    // Encontrar o aeroporto com mais partidas
     GHashTableIter iter;
     gpointer key, value;
 
@@ -139,14 +132,13 @@ void querie3(const char *start_date,
     }
 
     if (!best_code) {
-        // Muito improvável aqui, mas por segurança
         fputc('\n', f);
         g_hash_table_destroy(counts);
         fclose(f);
         return;
     }
 
-    // 3) Ir buscar info do aeroporto ao AirportsManager
+    // Ir buscar info do aeroporto ao AirportsManager
     Airport *ap = airports_manager_get(am, best_code);
     const char *name    = ap ? airport_get_name(ap)    : "";
     const char *city    = ap ? airport_get_city(ap)    : "";
@@ -156,9 +148,6 @@ void querie3(const char *start_date,
     if (!city)    city    = "";
     if (!country) country = "";
 
-    // 4) Escrever output:
-    //    code,name,city,country,departure count
-    //    (mesmo estilo de separador da querie1/2: vírgula, sem espaços)
     fprintf(f, "%s,%s,%s,%s,%d\n",
             best_code,
             name,
@@ -166,7 +155,7 @@ void querie3(const char *start_date,
             country,
             best_count);
 
-    // 5) Limpeza
+    // Limpeza
     g_hash_table_destroy(counts);
     fclose(f);
 }
