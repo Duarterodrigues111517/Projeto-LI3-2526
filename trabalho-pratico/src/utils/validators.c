@@ -144,3 +144,60 @@ int compare_datetimes(const char *dt1, const char *dt2) {
 }
 
 
+// código da aircraft 
+
+
+
+
+
+int is_valid_aircraft_code(const char *s) {
+
+
+    if (!s || !*s) return 0;
+
+
+
+
+    // sem espaços à frente/atrás
+
+
+    size_t len = strlen(s);
+
+
+    if (s[0] == ' ' || s[len-1] == ' ')
+
+
+        return 0;
+
+
+
+
+
+    // apenas letras maiúsculas, dígitos e '-'
+
+
+    for (const char *p = s; *p; p++) {
+
+
+        if (!((*p >= 'A' && *p <= 'Z') ||
+
+
+              (*p >= '0' && *p <= '9') ||
+
+
+              (*p == '-'))) {
+
+
+            return 0;
+
+
+        }
+
+
+    }
+
+
+    return 1;
+
+
+}
