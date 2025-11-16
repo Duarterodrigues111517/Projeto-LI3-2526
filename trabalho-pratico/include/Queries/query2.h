@@ -1,5 +1,5 @@
-#ifndef QUERIE2_H
-#define QUERIE2_H
+#ifndef QUERY2_H
+#define QUERY2_H
 
 #include "Aircrafts_Manager/aircrafts_manager.h"
 #include "Flights_Manager/flights_manager.h"

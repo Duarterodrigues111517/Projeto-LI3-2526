@@ -2,8 +2,12 @@
 #define QUERIES_PARSER_H
 
 #include "Airports_Manager/airports_manager.h"
-#include "Queries/querie1.h"
-#include "Queries/querie2.h"
+#include "Queries/query1.h"
+#include "Queries/query2.h"
+#include "Queries/query3.h"  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "Airports_Manager/airports_manager.h"
 #include "Aircrafts_Manager/aircrafts_manager.h"
 #include "Flights_Manager/flights_manager.h"

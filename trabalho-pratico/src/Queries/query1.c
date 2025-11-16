@@ -1,4 +1,4 @@
-#include "Queries/querie1.h"
+#include "Queries/query1.h"
 #include <stdio.h>
 #include <string.h>
 

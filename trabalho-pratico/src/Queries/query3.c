@@ -1,4 +1,4 @@
-#include "Queries/querie3.h"
+#include "Queries/query3.h"
 
 #include <glib.h>
 #include <stdio.h>
