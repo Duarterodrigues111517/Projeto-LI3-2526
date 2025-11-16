@@ -19,7 +19,6 @@ static int parse_int2(const char *p, int n, int *out) {
 }
 
 static int not_future_date(int Y,int M,int D) {
-    // Spec: consider current date = 2025/09/30
     if (Y>2025) return 0;
     if (Y==2025 && M>9) return 0;
     if (Y==2025 && M==9 && D>30) return 0;
@@ -139,7 +138,6 @@ int is_valid_country_code(const char *s) {
 
 
 int compare_datetimes(const char *dt1, const char *dt2) {
-    // returns negative if dt1 < dt2, 0 if equal, positive if dt1 > dt2
     return strcmp(dt1, dt2);
 }
 

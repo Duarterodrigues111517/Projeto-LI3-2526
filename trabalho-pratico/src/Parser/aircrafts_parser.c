@@ -13,7 +13,7 @@ static void ensure_errors_file(FILE **fp, const char *path, const char *header) 
     if (*fp) fputs(header, *fp); // header já inclui '\n'
 }
 
-// Inteiro estrito (sem lixo após o número)
+// Inteiro estrito 
 static int parse_int_strict(const char *s, int *out) {
     if (!s || !*s) return 0;
     char *end = NULL;
@@ -72,7 +72,7 @@ int parse_aircraft_row(GArray *f, const char *raw, const char *header,
     int year = 0, capacity = 0, range = 0;
     ok &= is_valid_year_yyyy(year_s, &year);
 
-    // capacity e range: inteiros positivos (validação sintática/lógica básica)
+    // capacity e range: inteiros positivos 
     if (ok) ok &= parse_int_strict(capacity_s, &capacity) && capacity > 0;
     if (ok) ok &= parse_int_strict(range_s, &range) && range > 0;
 

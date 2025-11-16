@@ -1,5 +1,5 @@
 #include "Parser/flights_parser.h"
-#include "utils/validators.h"   // is_valid_flight_id, is_valid_datetime, is_valid_status, is_valid_iata3, is_nonempty_str
+#include "utils/validators.h"  
 #include <string.h>
 #include <stdio.h>
 
@@ -59,7 +59,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 
     // -------- Validações sintáticas -----------
     int ok = 1;
-    ok &= is_valid_flight_id(id);          // ccdddddd
+    ok &= is_valid_flight_id(id);          
     ok &= is_valid_iata3(origin);
     ok &= is_valid_iata3(destination);
     ok &= (strcmp(origin, destination) != 0);
@@ -86,7 +86,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     else {
         // Para voos não cancelados:
 
-        // Se não são "N/A", têm de ser datetimes válidos (já tinhas isto antes)
+        // Se não são "N/A", têm de ser datetimes válidos
         if (actual_departure && strcmp(actual_departure, "N/A") != 0)
             ok &= is_valid_datetime(actual_departure);
         if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)

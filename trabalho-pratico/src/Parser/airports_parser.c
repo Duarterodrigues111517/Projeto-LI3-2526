@@ -8,11 +8,11 @@
 static void ensure_errors_file(FILE **fp, const char *path, const char *header) {
     if (*fp) return;
     *fp = fopen(path, "w");
-    if (*fp) fputs(header, *fp); // header still has '\n'
+    if (*fp) fputs(header, *fp); 
 }
 
 static int parse_double_strict(const char *s, double *out) {
-    // only succeeds if the whole string is a valid double with no trailing junk
+    
     char *end = NULL;
     errno = 0;
     double v = strtod(s, &end);
@@ -36,7 +36,7 @@ int parse_airport_row(GArray *f, const char *raw, const char *header,
     const char *country  = g_array_index(f, char*, 3);
     const char *lat_s    = g_array_index(f, char*, 4);
     const char *lon_s    = g_array_index(f, char*, 5);
-    const char *icao     = g_array_index(f, char*, 6); // (no Phase-1 rule; keep as-is)
+    const char *icao     = g_array_index(f, char*, 6);
     const char *type     = g_array_index(f, char*, 7);
 
     int ok = 1;
@@ -47,7 +47,7 @@ int parse_airport_row(GArray *f, const char *raw, const char *header,
 
     double lat = 0.0, lon = 0.0;
     if (ok) {
-        // we already validated format & range; still convert strictly
+        
         ok &= parse_double_strict(lat_s, &lat);
         ok &= parse_double_strict(lon_s, &lon);
     }
@@ -58,7 +58,7 @@ int parse_airport_row(GArray *f, const char *raw, const char *header,
         return 0;
     }
 
-    // Match your struct’s order: code, name, city, country, icao, type, latitude, longitude
+   
     Airport *a = airport_new(code, name, city, country, icao, type, lat, lon);
     airports_manager_add(mgr, a);
     return 1;
