@@ -33,7 +33,7 @@ void free_garray_parsed_elements(GArray *array) {
                 g_string_append_c(field, '"');
                 i++; 
             } else {
-                in_quotes = !in_quotes; /
+                in_quotes = !in_quotes; 
             }
         } else if (c == ',' && !in_quotes) {
             char *token = g_strdup(field->str);
