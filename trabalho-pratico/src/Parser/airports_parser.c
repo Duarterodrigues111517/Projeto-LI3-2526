@@ -59,7 +59,7 @@ int parse_airport_row(GArray *f, const char *raw, const char *header,
     }
 
    
-    Airport *a = airport_new(code, name, city, country, icao, type, lat, lon);
+    Airport *a = airport_new(code, name, city, country, icao, type, lat, lon, 0, 0);
     airports_manager_add(mgr, a);
     return 1;
 }

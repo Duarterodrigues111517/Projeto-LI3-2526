@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
     (void)passengers_mgr;
     ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file, flights_mgr, passengers_mgr);
     (void)reservations_mgr;
+    airports_manager_compute_passenger_counts(airports_table, flights_mgr, reservations_mgr);
 
     parse_queries(inputFile, airports_table, aircrafts_mgr, flights_mgr);
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]) {
     aircrafts_manager_free(aircrafts_mgr);
     flights_manager_free(flights_mgr);
     reservations_manager_free(reservations_mgr);
+
     passengers_manager_free(passengers_mgr);
 
 

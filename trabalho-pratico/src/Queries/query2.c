@@ -58,7 +58,7 @@ static int cmp_q2entry(const void *pa, const void *pb) {
 }
 
 void querie2(int N,
-             const char *manufacturer_filter,
+             const char *manufacturer_filter, char sep,
              AircraftsManager_t *acm,
              FlightsManager_t *fm,
              const char *output_path)
@@ -161,11 +161,11 @@ void querie2(int N,
         if (!man)   man   = "";
         if (!model) model = "";
 
-        // Mesmo estilo de separador que usaste na querie1 (vírgula)
-        fprintf(f, "%s,%s,%s,%d\n",
-                id,
-                man,
-                model,
+
+        fprintf(f, "%s%c%s%c%s%c%d\n",
+                id, sep,
+                man,sep,
+                model, sep,
                 entries[i].flight_count);
     }
 

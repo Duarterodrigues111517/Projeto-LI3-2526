@@ -5,7 +5,7 @@
 #include "Flights_Manager/flights_manager.h"
 
 void querie3(const char *start_date,
-             const char *end_date,
+             const char *end_date, char sep,
              AirportsManager_t *am,
              FlightsManager_t *fm,
              const char *output_path);

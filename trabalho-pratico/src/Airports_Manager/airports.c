@@ -12,13 +12,16 @@ struct Airport {
     char   *type;     
     double latitude;
     double longitude;
+    int arrival_count;
+    int departure_count;
+
 };
 
 static bool is_iata(const char *s){ return s && strlen(s)==3 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]) && isupper((unsigned char)s[2]); }
 
 Airport *airport_new(const char *code, const char *name, const char *city,
                      const char *country, const char *icao, const char *type,
-                     double latitude, double longitude){
+                     double latitude, double longitude, int arrival_count, int departure_count){
     if(!is_iata(code)) return NULL;
     if(latitude < -90.0 || latitude > 90.0) return NULL;
     if(longitude < -180.0 || longitude > 180.0) return NULL;
@@ -32,6 +35,8 @@ Airport *airport_new(const char *code, const char *name, const char *city,
     a->type = strdup(type);
     a->latitude = latitude;
     a->longitude = longitude;
+    a->arrival_count = arrival_count;
+    a->departure_count = departure_count;
     return a;
 }
 
@@ -49,6 +54,8 @@ const char *airport_get_icao(const Airport *a){ return a? a->icao: NULL; }
 const char *airport_get_type(const Airport *a){ return a? a->type: NULL; }
 double airport_get_latitude(const Airport *a){ return a? a->latitude: 0.0; }
 double airport_get_longitude(const Airport *a){ return a? a->longitude: 0.0; }
+int airport_get_arrival_count(const Airport *a){ return a? a->arrival_count: 0; }
+int airport_get_departure_count(const Airport *a){ return a? a->departure_count: 0; }
 
 bool airport_set_code(Airport *a, const char *code){ if(!a) return false; char *d=strdup(code); if(!d && code) return false; free(a->code); a->code=d; return true; }
 bool airport_set_name(Airport *a, const char *name){ if(!a) return false; char *d=strdup(name); if(!d && name) return false; free(a->name); a->name=d; return true; }
@@ -58,3 +65,5 @@ bool airport_set_icao(Airport *a, const char *icao){ if(!a) return false; char *
 bool airport_set_type(Airport *a, const char *type){ if(!a) return false; char *d=strdup(type); if(!d && type) return false; free(a->type); a->type=d; return true; }
 bool airport_set_latitude(Airport *a, double lat){ if(!a) return false; if(lat<-90.0||lat>90.0) return false; a->latitude = lat; return true; }
 bool airport_set_longitude(Airport *a, double lon){ if(!a) return false; if(lon<-180.0||lon>180.0) return false; a->longitude = lon; return true; }
+void airport_inc_arrivals(Airport *a, int n){ if(!a) return; a->arrival_count += n; }
+void airport_inc_departures(Airport *a, int n){ if(!a) return; a->departure_count += n; }

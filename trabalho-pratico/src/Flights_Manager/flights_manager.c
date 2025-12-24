@@ -73,3 +73,5 @@ void flights_manager_foreach(FlightsManager_t *fm,
     }
     g_list_free(values);
 }
+
+

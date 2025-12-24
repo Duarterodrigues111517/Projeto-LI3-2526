@@ -40,12 +40,21 @@ void parse_queries(const char *path_input,
         char *args = NULL;
         int qid = (int)strtol(ptr, &args, 10);
 
+        // NOVO: separador por omissão e formato S
+        char sep = ';';
+
+        // Se a seguir ao número vier 'S', muda separador e avança 1 char
+        if (*args == 'S') {
+            sep = '=';
+            args++; // salta o 'S'
+        }
+
         // Saltar espaços antes dos argumentos
         while (*args == ' ' || *args == '\t') args++;
 
         switch (qid) {
             case 1:
-                querie1(args, am, output_path);
+                querie1(args,sep, am, output_path);
                 break;
 
             case 2: {
@@ -70,7 +79,7 @@ void parse_queries(const char *path_input,
                 // se ainda houver texto, é o manufacturer; senão, não há filtro
                 const char *manufacturer = (*endptr != '\0') ? endptr : NULL;
 
-                querie2(N, manufacturer, aircrafts, flights, output_path);
+                querie2(N, manufacturer, sep, aircrafts, flights, output_path);
                 break;
             }
 
@@ -88,7 +97,7 @@ void parse_queries(const char *path_input,
                     break;
                 }
 
-                querie3(start_date, end_date, am, flights, output_path);
+                querie3(start_date, end_date, sep, am, flights, output_path);
                 break;
             }
 

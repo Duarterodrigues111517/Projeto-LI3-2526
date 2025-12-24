@@ -59,7 +59,7 @@ static void count_departures_cb(Flight *f, void *user_data) {
 }
 
 void querie3(const char *start_date,
-             const char *end_date,
+             const char *end_date, char sep,
              AirportsManager_t *am,
              FlightsManager_t *fm,
              const char *output_path)
@@ -148,11 +148,11 @@ void querie3(const char *start_date,
     if (!city)    city    = "";
     if (!country) country = "";
 
-    fprintf(f, "%s,%s,%s,%s,%d\n",
-            best_code,
-            name,
-            city,
-            country,
+    fprintf(f, "%s%c%s%c%s%c%s%c%d\n",
+            best_code, sep,
+            name, sep,
+            city, sep,
+            country, sep,
             best_count);
 
     // Limpeza

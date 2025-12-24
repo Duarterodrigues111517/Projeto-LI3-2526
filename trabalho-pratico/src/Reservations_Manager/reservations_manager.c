@@ -53,3 +53,17 @@ Reservation *reservations_manager_get(const ReservationsManager_t *rm, const cha
     return (Reservation *)g_hash_table_lookup(rm->reservations_table, id);
 }
 
+void reservations_manager_foreach(ReservationsManager_t *rm,
+                                  void (*fn)(Reservation *r, void *user_data),
+                                  void *user_data)
+{
+    if (!rm || !fn) return;
+
+    GList *values = g_hash_table_get_values(rm->reservations_table);
+    for (GList *l = values; l != NULL; l = l->next) {
+        Reservation *r = (Reservation *)l->data;
+        if (r) fn(r, user_data);
+    }
+    g_list_free(values);
+}
+

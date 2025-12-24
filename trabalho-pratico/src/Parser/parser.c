@@ -8,7 +8,6 @@ void free_garray_parsed_elements(GArray *array) {
     g_array_set_size(array, 0); 
 }
 
-
  int process_line(FILE *file, GArray *array, char **lineCopy) {
     char *line = NULL;
     size_t bufsize = 0;
