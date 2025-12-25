@@ -79,14 +79,15 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
         ok &= (actual_arrival   != NULL && strcmp(actual_arrival,   "N/A") == 0);
     }
     else {
-        // Para voos não cancelados:
+        // Para voos não cancelados, os actual_* têm de existir e não podem ser "N/A"
+        ok &= (actual_departure != NULL && strcmp(actual_departure, "N/A") != 0);
+        ok &= (actual_arrival   != NULL && strcmp(actual_arrival,   "N/A") != 0);
 
-        if (actual_departure && strcmp(actual_departure, "N/A") != 0)
-            ok &= is_valid_datetime(actual_departure);
-        if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)
-            ok &= is_valid_datetime(actual_arrival);
+        // E têm de ser datetime válidos
+        ok &= is_valid_datetime(actual_departure);
+        ok &= is_valid_datetime(actual_arrival);
 
-        // E agora sim faz sentido comparar
+        // Só depois faz sentido comparar
         ok &= (compare_datetimes(actual_departure, actual_arrival) < 0);
 
         if (strcmp(status, "Delayed") == 0) {
@@ -94,10 +95,18 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
             ok &= (compare_datetimes(actual_arrival,   arrival)   > 0);
         }
     }
+
      // Se alguma validação falhar, escreve linha de erro
     if (!ok) {
         ensure_errors_file(errors_fp, FLIGHTS_ERR_PATH, header);
-        if (*errors_fp) fputs(raw, *errors_fp);
+        if (*errors_fp) {
+        fputs(raw, *errors_fp);
+
+        size_t len = strlen(raw);
+        if (len > 0 && raw[len - 1] != '\n') {
+            fputc('\n', *errors_fp);
+        }
+    }
         return 0;
     }
 

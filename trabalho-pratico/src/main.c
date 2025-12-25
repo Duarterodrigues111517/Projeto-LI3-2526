@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     strcpy(passengers_file, datasetDir); strcat(passengers_file, "/passengers.csv");
 
     AirportsManager_t *airports_table = parse_airports_file(airports_file);
-    (void)airports_table; // remove depois de usar
+    (void)airports_table; 
     AircraftsManager_t *aircrafts_mgr = parse_aircrafts_file(aircrafts_file);
     (void)aircrafts_mgr;
     FlightsManager_t *flights_mgr = parse_flights_file(flights_file, aircrafts_mgr);
