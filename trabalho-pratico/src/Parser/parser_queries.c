@@ -7,7 +7,7 @@
 void parse_queries(const char *path_input,
                    AirportsManager_t *am,
                    AircraftsManager_t *aircrafts,
-                   FlightsManager_t *flights) {
+                   FlightsManager_t *flights, GHashTable *q6_table) {
     FILE *fp = fopen(path_input, "r");
     if (!fp) {
         perror("Erro ao abrir input.txt");
@@ -98,6 +98,10 @@ void parse_queries(const char *path_input,
                 }
 
                 querie3(start_date, end_date, sep, am, flights, output_path);
+                break;
+            }
+            case 6:{
+                querie6(args, sep, q6_table, output_path);
                 break;
             }
 
