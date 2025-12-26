@@ -49,7 +49,8 @@ int main(int argc, char *argv[]) {
     (void)reservations_mgr;
     airports_manager_compute_passenger_counts(airports_table, flights_mgr, reservations_mgr);
     GHashTable *q6_table =
-    g_hash_table_new_full(g_str_hash, g_str_equal, free, free);
+    g_hash_table_new_full(g_str_hash, g_str_equal, free, (GDestroyNotify) g_hash_table_destroy);
+
     compute_q6(q6_table, reservations_mgr, flights_mgr, passengers_mgr);
 
 
@@ -59,11 +60,10 @@ int main(int argc, char *argv[]) {
     aircrafts_manager_free(aircrafts_mgr);
     flights_manager_free(flights_mgr);
     reservations_manager_free(reservations_mgr);
-
     passengers_manager_free(passengers_mgr);
 
 
-
+    g_hash_table_destroy(q6_table);
     free(airports_file);
     free(aircrafts_file);
     free(flights_file);
