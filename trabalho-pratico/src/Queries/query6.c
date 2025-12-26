@@ -19,13 +19,13 @@ static void free_int_ptr(gpointer p) {
     free(p);
 }
 
-static void q6_add_arrival(GHashTable *q6_table, const char *nat, const char *dest) {
+static void q6_add_arrival_with_count(GHashTable *q6_table, const char *nat, 
+                                       const char *dest) {
     if (!q6_table || !nat || !dest) return;
 
     GHashTable *dest_counts = g_hash_table_lookup(q6_table, nat);
 
     if (!dest_counts) {
-        // tabela interna: dest -> int*
         dest_counts = g_hash_table_new_full(g_str_hash, g_str_equal, free, free_int_ptr);
         g_hash_table_insert(q6_table, strdup(nat), dest_counts);
     }
@@ -37,7 +37,7 @@ static void q6_add_arrival(GHashTable *q6_table, const char *nat, const char *de
         *cnt = 0;
         g_hash_table_insert(dest_counts, strdup(dest), cnt);
     }
-    (*cnt)++;
+    (*cnt) ++;  // Add the number of passengers, not just 1
 }
 
 static void q6_process_reservation(Reservation *r, void *user_data) {
@@ -58,6 +58,8 @@ static void q6_process_reservation(Reservation *r, void *user_data) {
     const char *nat = passenger_get_nationality(p);
     if (!nat || *nat == '\0') return;
 
+
+
     int n = reservation_get_flights_count(r);
     for (int i = 0; i < n; i++) {
         const char *fid = reservation_get_flight_id_at(r, i);
@@ -72,8 +74,8 @@ static void q6_process_reservation(Reservation *r, void *user_data) {
         const char *dest = flight_get_destination(f);
         if (!dest) continue;
 
-        // aqui sim: contar chegadas (destino) por nacionalidade
-        q6_add_arrival(ctx->q6, nat, dest);
+        // Count ALL passengers in this reservation as arriving at this destination
+        q6_add_arrival_with_count(ctx->q6, nat, dest);
     }
 }
 
