@@ -1,0 +1,13 @@
+Rainbow Breeze=6116=52.448
+Polar Lines=6927=52.589
+Global Way=5802=52.792
+Titan Intercontinental=5016=51.708
+Liberty Plane=5716=52.772
+PanAir=7751=52.445
+Union Connect=8595=52.054
+SkyGate Airlines=5620=52.752
+Lighthouse Air=8826=52.491
+Keen Skyways=6560=52.797
+Rocket Shuttle=8151=52.640
+Rivet Transport=5820=52.768
+Omega Wings=6462=52.604

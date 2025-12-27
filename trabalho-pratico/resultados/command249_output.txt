@@ -1,0 +1,11 @@
+Rivet Transport=5820=52.768
+Omega Wings=6462=52.604
+Delta Pacific=3928=52.390
+Horizon Blue=7687=52.539
+Yukon Airservices=9921=52.246
+PanAir=7751=52.445
+Liberty Plane=5716=52.772
+Sunrise Networks=7855=52.962
+Keen Skyways=6560=52.797
+Lighthouse Air=8826=52.491
+Union Connect=8595=52.054

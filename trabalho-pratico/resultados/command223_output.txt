@@ -1,0 +1,4 @@
+Omega Wings;6462;52.604
+AirRover;8283;52.454
+BlueDawn Aviation;4713;52.770
+Quasar Travel;5504;52.344

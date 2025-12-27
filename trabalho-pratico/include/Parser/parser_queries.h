@@ -5,6 +5,7 @@
 #include "Queries/query1.h"
 #include "Queries/query2.h"
 #include "Queries/query3.h"  
+#include "Queries/query5.h"
 #include "Queries/query6.h"
 #include <stdio.h>
 #include <stdlib.h>

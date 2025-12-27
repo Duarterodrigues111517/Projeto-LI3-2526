@@ -1,0 +1,5 @@
+Rivet Transport;5820;52.768
+Delta Pacific;3928;52.390
+Omega Wings;6462;52.604
+Quasar Travel;5504;52.344
+Everest Air;9289;52.149

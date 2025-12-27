@@ -1,0 +1,5 @@
+Titan Intercontinental=5016=51.708
+Everest Air=9289=52.149
+Yukon Airservices=9921=52.246
+Horizon Blue=7687=52.539
+Polar Lines=6927=52.589
