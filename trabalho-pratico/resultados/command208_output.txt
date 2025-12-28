@@ -1,5 +1,0 @@
-Rainbow Breeze;18003;52.256
-PanAir;17963;52.237
-Lighthouse Air;17993;52.803
-AirRover;17776;52.389
-Delta Pacific;17972;52.543

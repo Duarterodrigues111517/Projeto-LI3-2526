@@ -1,5 +1,0 @@
-Titan Intercontinental=18076=52.430
-Liberty Plane=18154=52.326
-Union Connect=18094=52.611
-Rivet Transport=18165=52.450
-AirRover=17776=52.389
