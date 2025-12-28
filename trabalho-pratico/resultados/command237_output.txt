@@ -1,0 +1,8 @@
+AirRover;17776;52.389
+Rivet Transport;18165;52.450
+BlueDawn Aviation;17834;52.519
+Global Way;17945;52.611
+Delta Pacific;17972;52.543
+Quasar Travel;18021;52.518
+Jet3 Airlines;17952;52.361
+Vertex Airlines;18011;52.460

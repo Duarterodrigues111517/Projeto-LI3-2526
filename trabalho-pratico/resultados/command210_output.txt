@@ -1,0 +1,11 @@
+AirRover;17776;52.389
+Delta Pacific;17972;52.543
+PanAir;17963;52.237
+Polar Lines;17981;52.406
+Vertex Airlines;18011;52.460
+Sunrise Networks;18042;52.637
+Horizon Blue;17804;52.289
+Omega Wings;17997;52.401
+Union Connect;18094;52.611
+Liberty Plane;18154;52.326
+Titan Intercontinental;18076;52.430

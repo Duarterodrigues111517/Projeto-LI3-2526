@@ -1,0 +1,4 @@
+Quasar Travel;18021;52.518
+Jet3 Airlines;17952;52.361
+AirRover;17776;52.389
+SkyGate Airlines;17974;52.134

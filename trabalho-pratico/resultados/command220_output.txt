@@ -1,0 +1,13 @@
+Horizon Blue=17804=52.289
+SkyGate Airlines=17974=52.134
+Rainbow Breeze=18003=52.256
+Keen Skyways=17797=52.268
+Moonlight Airways=17832=52.403
+JetVenture Airlines=17934=52.558
+Delta Pacific=17972=52.543
+Quasar Travel=18021=52.518
+Rivet Transport=18165=52.450
+Zebra Regional Airways=17915=52.478
+Everest Air=17870=52.805
+Bravo Voyages=18056=52.704
+Rocket Shuttle=17867=52.394

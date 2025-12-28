@@ -1,0 +1,21 @@
+Polar Lines=17981=52.406
+PanAir=17963=52.237
+Titan Intercontinental=18076=52.430
+Liberty Plane=18154=52.326
+Union Connect=18094=52.611
+Lighthouse Air=17993=52.803
+Cloud Nine=17852=52.222
+Yukon Airservices=17919=52.450
+Vertex Airlines=18011=52.460
+Sunrise Networks=18042=52.637
+Jet3 Airlines=17952=52.361
+Quasar Travel=18021=52.518
+AirRover=17776=52.389
+BlueDawn Aviation=17834=52.519
+Global Way=17945=52.611
+Rivet Transport=18165=52.450
+Delta Pacific=17972=52.543
+SkyGate Airlines=17974=52.134
+Horizon Blue=17804=52.289
+Omega Wings=17997=52.401
+JetVenture Airlines=17934=52.558

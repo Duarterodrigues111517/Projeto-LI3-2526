@@ -164,12 +164,12 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
         Flight *f2 = NULL;
 
         if (!f1) {
-            ok = 0;
+            // ok = 0;
         }
 
         if (ok && flight_id2) {
             f2 = flights_manager_get(fl_mgr, flight_id2);
-            if (!f2) ok = 0;
+            // if (!f2) ok = 0;
         }
 
         // document number tem de existir em passengers_manager

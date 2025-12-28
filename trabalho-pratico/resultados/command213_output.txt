@@ -1,0 +1,8 @@
+Omega Wings=17997=52.401
+Quasar Travel=18021=52.518
+Sunrise Networks=18042=52.637
+Vertex Airlines=18011=52.460
+PanAir=17963=52.237
+SkyGate Airlines=17974=52.134
+Horizon Blue=17804=52.289
+AirRover=17776=52.389
