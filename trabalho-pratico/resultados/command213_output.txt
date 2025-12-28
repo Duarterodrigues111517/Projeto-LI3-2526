@@ -1,8 +1,0 @@
-Sunrise Networks=7855=52.962
-Horizon Blue=7687=52.539
-Yukon Airservices=9921=52.246
-SkyGate Airlines=5620=52.752
-Keen Skyways=6560=52.797
-Lighthouse Air=8826=52.491
-Liberty Plane=5716=52.772
-PanAir=7751=52.445
