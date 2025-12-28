@@ -56,23 +56,30 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     
 
     // -------- Validações sintáticas -----------
+    int flag=0;
+
     int ok = 1;
-    ok &= is_valid_flight_id(id);          
+    ok &= is_valid_flight_id(id);      
     ok &= is_valid_iata3(origin);
+        if (!ok && flag==0) {
+        flag=2;
+    }
     ok &= is_valid_iata3(destination);
     ok &= (strcmp(origin, destination) != 0);
-
     ok &= is_valid_datetime(departure);
     ok &= is_valid_datetime(arrival);
-    
+
+
     if (actual_departure && strcmp(actual_departure, "N/A") != 0)
-        ok &= is_valid_datetime(actual_departure);
     if (actual_arrival && strcmp(actual_arrival, "N/A") != 0)
-        ok &= is_valid_datetime(actual_arrival);
+
 
     ok &= is_valid_status(status);
     ok &= (compare_datetimes(departure, arrival) < 0); 
     ok &= is_aircraft_valid(a_mgr,aircraft);
+        if (!ok && flag==0) {
+        flag=11;
+    }
 
     if (strcmp(status, "Cancelled") == 0) {
         ok &= (actual_departure != NULL && strcmp(actual_departure, "N/A") == 0);
@@ -98,6 +105,20 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
 
      // Se alguma validação falhar, escreve linha de erro
     if (!ok) {
+
+    //fprintf(stderr, "\n=== DEBUG Flight Parser ===\n");
+    //fprintf(stderr, "n=%d\n", n);
+    //fprintf(stderr, "id='%s' (len=%zu)\n", id, strlen(id));
+    //fprintf(stderr, "origin='%s' (len=%zu)\n", origin, strlen(origin));
+    //fprintf(stderr, "destination='%s' (len=%zu)\n", destination, strlen(destination));
+    //fprintf(stderr, "aircraft='%s' (len=%zu)\n", aircraft, strlen(aircraft));
+    //fprintf(stderr, "status='%s' (len=%zu)\n", status, strlen(status));
+    //fprintf(stderr, "departure='%s'\n", departure);
+    //fprintf(stderr, "actual_departure='%s'\n", actual_departure);
+    //fprintf(stderr, "arrival='%s'\n", arrival);
+    //fprintf(stderr, "actual_arrival='%s'\n", actual_arrival);
+    //fprintf(stderr, "flag=%d\n", flag);
+
         ensure_errors_file(errors_fp, FLIGHTS_ERR_PATH, header);
         if (*errors_fp) {
         fputs(raw, *errors_fp);

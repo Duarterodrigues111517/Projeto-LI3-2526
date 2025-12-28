@@ -1,0 +1,8 @@
+Yukon Airservices;9921;52.246
+Sunrise Networks;7855;52.962
+Xylon Express;5543;52.360
+Moonlight Airways;7679;52.674
+Rainbow Breeze;6116;52.448
+Rocket Shuttle;8151;52.640
+BlueDawn Aviation;4713;52.770
+Rivet Transport;5820;52.768

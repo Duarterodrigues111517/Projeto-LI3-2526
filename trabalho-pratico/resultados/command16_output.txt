@@ -1,0 +1,1 @@
+BIE=Beatrice Municipal Airport=Beatrice=US=small_airport=5=2

@@ -1,0 +1,4 @@
+Global Way=5802=52.792
+Liberty Plane=5716=52.772
+PanAir=7751=52.445
+Lighthouse Air=8826=52.491

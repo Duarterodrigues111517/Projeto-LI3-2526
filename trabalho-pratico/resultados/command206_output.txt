@@ -1,0 +1,3 @@
+Moonlight Airways;7679;52.674
+BlueDawn Aviation;4713;52.770
+AeroFlyer;6680;52.386

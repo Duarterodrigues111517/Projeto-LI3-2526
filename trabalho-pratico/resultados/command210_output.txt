@@ -1,0 +1,11 @@
+Rivet Transport;5820;52.768
+BlueDawn Aviation;4713;52.770
+AirRover;8283;52.454
+AeroFlyer;6680;52.386
+Quasar Travel;5504;52.344
+Keen Skyways;6560;52.797
+PanAir;7751;52.445
+Omega Wings;6462;52.604
+Delta Pacific;3928;52.390
+Liberty Plane;5716;52.772
+Lighthouse Air;8826;52.491

@@ -95,9 +95,17 @@ int is_valid_lat(const char *s){ return is_valid_decimal_in_range(s, 90, 2); }
 int is_valid_lon(const char *s){ return is_valid_decimal_in_range(s,180, 3); }
 
 int is_valid_flight_id(const char *s) {
-    if (!s || strlen(s)!=7) return 0;
-    return (s[0]>='A'&&s[0]<='Z') && (s[1]>='A'&&s[1]<='Z') &&
-           all_digits(s+2);
+    if (!s) return 0;
+    
+    size_t len = strlen(s);
+    if (len != 7 && len != 8) return 0;  // 7 ou 8 caracteres
+    
+    // Verifica se as 2 primeiras são letras maiúsculas
+    if (!(s[0]>='A' && s[0]<='Z') || !(s[1]>='A' && s[1]<='Z')) 
+        return 0;
+    
+    // Verifica se os próximos 5 ou 6 caracteres são dígitos
+    return all_digits(s+2);
 }
 
 int is_valid_reservation_id(const char *s) {
