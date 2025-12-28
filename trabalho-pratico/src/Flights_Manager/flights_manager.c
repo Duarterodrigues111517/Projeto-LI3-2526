@@ -8,22 +8,32 @@ static int is_leap(int y) {
     return (y % 400 == 0) || (y % 4 == 0 && y % 100 != 0);
 }
 
-static int days_before_month(int y, int m) {
-    static const int cumdays_norm[] =
-        {0,31,59,90,120,151,181,212,243,273,304,334}; /* before month m (1-based) */
-    int d = cumdays_norm[m-1];
-    if (m > 2 && is_leap(y)) d += 1;
-    return d;
+static int days_in_month(int y, int m) {
+    static const int days[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+    if (m == 2 && is_leap(y)) return 29;
+    return days[m];
 }
 
 static long long days_from_civil(int y, int m, int d) {
-    /* days since 1970-01-01, algorithm-based */
-    y -= (m <= 2);
-    const int era = (y >= 0 ? y : y - 399) / 400;
-    const unsigned yoe = (unsigned)(y - era * 400);
-    const unsigned doy = (unsigned)(days_before_month(y + (m <= 2), m) + (d - 1));
-    const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
-    return (long long)era * 146097LL + (long long)doe - 719468LL; /* 719468 = days to 1970-01-01 */
+    /* Convert date to days since epoch (1970-01-01) */
+    /* Using a simpler, more reliable algorithm */
+    
+    long long total_days = 0;
+    
+    /* Add days for complete years from 1970 to y-1 */
+    for (int year = 1970; year < y; year++) {
+        total_days += is_leap(year) ? 366 : 365;
+    }
+    
+    /* Add days for complete months in year y */
+    for (int month = 1; month < m; month++) {
+        total_days += days_in_month(y, month);
+    }
+    
+    /* Add remaining days */
+    total_days += d - 1;  /* -1 because day 1 = 0 days elapsed */
+    
+    return total_days;
 }
 
 static int parse_datetime_minutes(const char *s, long long *out_minutes) {
