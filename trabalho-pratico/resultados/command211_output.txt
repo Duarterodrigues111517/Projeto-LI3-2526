@@ -1,9 +1,0 @@
-Rocket Shuttle=34605=52.419
-Jet3 Airlines=36083=52.393
-Omega Wings=33596=52.539
-Polar Lines=34950=52.575
-Liberty Plane=32206=52.452
-BlueDawn Aviation=32692=52.484
-Horizon Blue=36828=52.309
-Zebra Regional Airways=36004=52.611
-AirRover=36453=52.492

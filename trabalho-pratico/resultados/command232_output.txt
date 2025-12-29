@@ -1,3 +1,0 @@
-Rocket Shuttle=34605=52.419
-Jet3 Airlines=36083=52.393
-Omega Wings=33596=52.539
