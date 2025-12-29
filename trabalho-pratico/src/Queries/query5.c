@@ -14,11 +14,13 @@ static int cmp_q5_rows(gconstpointer a, gconstpointer b) {
     const Q5Row *ra = a;
     const Q5Row *rb = b;
 
-    if (ra->avg_delay < rb->avg_delay) return 1;   /* desc */
-    if (ra->avg_delay > rb->avg_delay) return -1;
+    /* Sort by avg_delay descending - check with epsilon for floating point */
+    double diff = rb->avg_delay - ra->avg_delay;
+    if (diff > 0.0001) return 1;   /* rb > ra, so rb comes first */
+    if (diff < -0.0001) return -1; /* ra > rb, so ra comes first */
 
-    /* tie -> airline asc */
-    return g_strcmp0(ra->airline, rb->airline);
+    /* Tie-breaker: airline ascending */
+    return strcmp(ra->airline, rb->airline);
 }
 
 void querie5(const char *args, char sep, FlightsManager_t *fm, const char *output_path)

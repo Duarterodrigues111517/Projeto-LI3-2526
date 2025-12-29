@@ -2,6 +2,7 @@
 #define FLIGHTS_H
 
 #include <stdbool.h>
+#include <utils/validators.h>
 
 typedef struct Flight Flight;
 
