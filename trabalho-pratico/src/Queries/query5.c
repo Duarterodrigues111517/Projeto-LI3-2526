@@ -5,21 +5,20 @@
 #include <string.h>
 
 typedef struct {
-    const char *airline; /* apontador para key da hash (válido enquanto a hash existir) */
+    char *airline;        /* duplicado para ser seguro fora da hash */
     long delayed_count;
     double avg_delay;
 } Q5Row;
 
-static int cmp_q5_rows(gconstpointer a, gconstpointer b) {
-    const Q5Row *ra = a;
-    const Q5Row *rb = b;
+static int cmp_q5_rows_qsort(const void *a, const void *b) {
+    const Q5Row *ra = (const Q5Row *)a;
+    const Q5Row *rb = (const Q5Row *)b;
 
-    /* Sort by avg_delay descending - check with epsilon for floating point */
-    double diff = rb->avg_delay - ra->avg_delay;
-    if (diff > 0.0001) return 1;   /* rb > ra, so rb comes first */
-    if (diff < -0.0001) return -1; /* ra > rb, so ra comes first */
+    /* avg_delay desc */
+    if (ra->avg_delay < rb->avg_delay) return 1;
+    if (ra->avg_delay > rb->avg_delay) return -1;
 
-    /* Tie-breaker: airline ascending */
+    /* tie: airline asc */
     return strcmp(ra->airline, rb->airline);
 }
 
@@ -59,9 +58,18 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         return;
     }
 
-    /* construir array */
-    GPtrArray *arr = g_ptr_array_new_full(g_hash_table_size(tab), free);
+    /* 1) contar quantas linhas válidas vamos ter */
+    size_t cap = g_hash_table_size(tab);
+    Q5Row *rows = malloc(sizeof(Q5Row) * cap);
+    if (!rows) {
+        fputc('\n', out);
+        fclose(out);
+        return;
+    }
 
+    size_t n_rows = 0;
+
+    /* 2) preencher array */
     GHashTableIter it;
     gpointer key, val;
     g_hash_table_iter_init(&it, tab);
@@ -71,32 +79,39 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         const Q5AirlineStat *st = (const Q5AirlineStat *)val;
         if (!st || st->delayed_count <= 0) continue;
 
-        Q5Row *row = malloc(sizeof(*row));
-        if (!row) continue;
+        rows[n_rows].airline = strdup(airline); /* segurança */
+        if (!rows[n_rows].airline) continue;
 
-        row->airline = airline;
-        row->delayed_count = st->delayed_count;
-        row->avg_delay = (double)st->total_delay_minutes / (double)st->delayed_count;
+        rows[n_rows].delayed_count = st->delayed_count;
+        rows[n_rows].avg_delay =
+            (double)st->total_delay_minutes / (double)st->delayed_count;
 
-        g_ptr_array_add(arr, row);
+        n_rows++;
     }
 
-    if (arr->len == 0) {
+    if (n_rows == 0) {
         fputc('\n', out);
-        g_ptr_array_free(arr, TRUE);
+        free(rows);
         fclose(out);
         return;
     }
 
-    g_ptr_array_sort(arr, cmp_q5_rows);
+    /* 3) sort com qsort */
+    qsort(rows, n_rows, sizeof(Q5Row), cmp_q5_rows_qsort);
 
-    /* output top N */
-    guint limit = (N < (int)arr->len) ? (guint)N : arr->len;
-    for (guint i = 0; i < limit; i++) {
-        Q5Row *r = g_ptr_array_index(arr, i);
-        fprintf(out, "%s%c%ld%c%.3f\n", r->airline, sep, r->delayed_count, sep, r->avg_delay);
+    /* 4) output top N */
+    size_t limit = (N < (int)n_rows) ? (size_t)N : n_rows;
+    for (size_t i = 0; i < limit; i++) {
+        fprintf(out, "%s%c%ld%c%.3f\n",
+                rows[i].airline, sep,
+                rows[i].delayed_count, sep,
+                rows[i].avg_delay);
     }
 
-    g_ptr_array_free(arr, TRUE);
+    /* 5) free */
+    for (size_t i = 0; i < n_rows; i++) {
+        free(rows[i].airline);
+    }
+    free(rows);
     fclose(out);
 }
