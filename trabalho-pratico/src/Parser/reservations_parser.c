@@ -39,70 +39,61 @@ static int parse_bool_flex(const char *s, bool *out) {
     return 0;
 }
 
-static int parse_flight_ids_list(const char *s, char **out1, char **out2) {
-    *out1 = NULL;
-    *out2 = NULL;
-    if (!s) return 0;
+static int parse_flight_ids_list_fast(const char *s, char *id1, size_t id1_sz, char *id2, size_t id2_sz, int *n_ids) {
+    if (!s || !id1 || !id2 || !n_ids) return 0;
 
     size_t len = strlen(s);
-    if (len < 2 || s[0] != '[' || s[len-1] != ']') {
-        return 0;
-    }
+    if (len < 2 || s[0] != '[' || s[len-1] != ']') return 0;
 
-    // copiar conteúdo entre [ e ]
-    char *inner = strndup(s + 1, len - 2);
-    if (!inner) return 0;
+    const char *p = s + 1;              // after '['
+    const char *end = s + len - 1;      // at ']'
 
-    // remover aspas simples
-    char *p = inner, *q = inner;
-    while (*p) {
-        if (*p != '\'') *q++ = *p;
-        p++;
-    }
-    *q = '\0';
+    *n_ids = 0;
+    id1[0] = '\0';
+    id2[0] = '\0';
 
-    // separar por vírgulas
-    int count = 0;
-    char *tok = strtok(inner, ",");
-    while (tok) {
-        while (isspace((unsigned char)*tok)) tok++;
-        char *end = tok + strlen(tok);
-        while (end > tok && isspace((unsigned char)end[-1])) {
-            end--;
-        }
-        *end = '\0';
+    while (p < end) {
+        while (p < end && isspace((unsigned char)*p)) p++;
+        if (p >= end) break;
 
-        if (*tok != '\0') {
-            if (count == 0) {
-                *out1 = strdup(tok);
-                if (!*out1) { free(inner); return 0; }
-            } else if (count == 1) {
-                *out2 = strdup(tok);
-                if (!*out2) { free(inner); free(*out1); *out1 = NULL; return 0; }
+        // Expect optional quote '
+        if (*p == '\'') p++;
+
+        // Read token until quote or comma or end
+        const char *start = p;
+        while (p < end && *p != '\'' && *p != ',' ) p++;
+        const char *stop = p;
+
+        // Skip closing quote if present
+        if (p < end && *p == '\'') p++;
+
+        // Trim trailing spaces inside token
+        while (stop > start && isspace((unsigned char)stop[-1])) stop--;
+
+        size_t tlen = (size_t)(stop - start);
+        if (tlen > 0) {
+            if (*n_ids == 0) {
+                if (tlen >= id1_sz) return 0;
+                memcpy(id1, start, tlen);
+                id1[tlen] = '\0';
+            } else if (*n_ids == 1) {
+                if (tlen >= id2_sz) return 0;
+                memcpy(id2, start, tlen);
+                id2[tlen] = '\0';
             } else {
-                free(inner);
-                free(*out1); free(*out2);
-                *out1 = *out2 = NULL;
-                return 0;
+                return 0; // >2 ids invalid
             }
-            count++;
+            (*n_ids)++;
         }
 
-        tok = strtok(NULL, ",");
+        // Move to next (skip spaces and optional comma)
+        while (p < end && isspace((unsigned char)*p)) p++;
+        if (p < end && *p == ',') p++;
     }
 
-    free(inner);
-
-    if (count == 0) {
-        // lista vazia → inválido
-        free(*out1); free(*out2);
-        *out1 = *out2 = NULL;
-        return 0;
-    }
-
-    // count == 1 ou 2 é aceite
-    return 1;
+    return (*n_ids >= 1 && *n_ids <= 2);
 }
+
 
 int parse_reservation_row(GArray *f, const char *raw, const char *header,
                           ReservationsManager_t *mgr,
@@ -144,18 +135,15 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     if (ok) ok &= parse_bool_flex(priority_board_s, &priority_boarding);
 
     // parse e validar lista de flight ids
-    char *flight_id1 = NULL;
-    char *flight_id2 = NULL;
+    char flight_id1[32], flight_id2[32];
+    int n_ids = 0;
 
+    if (ok) ok &= parse_flight_ids_list_fast(flight_ids_field, flight_id1, sizeof(flight_id1), flight_id2, sizeof(flight_id2), &n_ids);
     if (ok) {
-        ok &= parse_flight_ids_list(flight_ids_field, &flight_id1, &flight_id2);
-    }
-
-    if (ok) {
-        // validação sintática de cada flight id individual
         ok &= is_valid_flight_id(flight_id1);
-        if (flight_id2) ok &= is_valid_flight_id(flight_id2);
+        if (n_ids == 2) ok &= is_valid_flight_id(flight_id2);
     }
+
 
     // -------- validações LÓGICAS com os managers --------
     if (ok) {
@@ -167,7 +155,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
             ok = 0;
         }
 
-        if (ok && flight_id2) {
+        if (ok && n_ids == 2) {
             f2 = flights_manager_get(fl_mgr, flight_id2);
             if (!f2) ok = 0;
         }
@@ -179,7 +167,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
         }
 
         // se houver 2 voos, destino do 1º = origem do 2º
-        if (ok && flight_id2 && f1 && f2) {
+        if (ok && n_ids==2 && f1 && f2) {
             const char *dest1 = flight_get_destination(f1);
             const char *orig2 = flight_get_origin(f2);
             if (!dest1 || !orig2 || strcmp(dest1, orig2) != 0) {
@@ -191,8 +179,6 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     if (!ok) {
         ensure_errors_file(errors_fp, RESERVATIONS_ERR_PATH, header);
         if (*errors_fp) fputs(raw, *errors_fp);
-        free(flight_id1);
-        free(flight_id2);
         return 0;
     }
 
@@ -207,8 +193,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
                                      priority_boarding,
                                      qr_code);
 
-    free(flight_id1);
-    free(flight_id2);
+
 
     if (!r) {
         ensure_errors_file(errors_fp, RESERVATIONS_ERR_PATH, header);

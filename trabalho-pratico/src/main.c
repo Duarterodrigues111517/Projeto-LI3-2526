@@ -47,14 +47,16 @@ int main(int argc, char *argv[]) {
     (void)passengers_mgr;
     ReservationsManager_t *reservations_mgr = parse_reservations_file(reservations_file, flights_mgr, passengers_mgr);
     (void)reservations_mgr;
-    airports_manager_compute_passenger_counts(airports_table, flights_mgr, reservations_mgr);
+    airports_manager_compute_passenger_counts(airports_table, flights_mgr, reservations_mgr);   
     GHashTable *q6_table =
     g_hash_table_new_full(g_str_hash, g_str_equal, free, (GDestroyNotify) g_hash_table_destroy);
 
     compute_q6(q6_table, reservations_mgr, flights_mgr, passengers_mgr);
+   
 
 
     parse_queries(inputFile, airports_table, aircrafts_mgr, flights_mgr, q6_table);
+
 
     airports_manager_free(airports_table);
     aircrafts_manager_free(aircrafts_mgr);
