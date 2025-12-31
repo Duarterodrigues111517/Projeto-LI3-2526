@@ -19,7 +19,7 @@ static int cmp_q5_rows_qsort(const void *a, const void *b) {
     if (ra->avg_delay > rb->avg_delay) return -1;
 
     /* tie: airline asc */
-    return strcmp(ra->airline, rb->airline);
+    return strcmp(rb->airline, ra->airline);
 }
 
 void querie5(const char *args, char sep, FlightsManager_t *fm, const char *output_path)
