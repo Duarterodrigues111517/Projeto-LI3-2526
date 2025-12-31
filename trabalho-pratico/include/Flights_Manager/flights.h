@@ -16,8 +16,7 @@ Flight *flight_new(const char *id, const char *departure,
                    const char *origin,
                    const char *destination,
                    const char *aircraft,
-                   const char *airline,
-                   const char *tracking_url);
+                   const char *airline);
 void flight_free(Flight *f);
 
 // Getters
@@ -32,7 +31,6 @@ const char *flight_get_origin(const Flight *f);
 const char *flight_get_destination(const Flight *f);
 const char *flight_get_aircraft(const Flight *f);
 const char *flight_get_airline(const Flight *f);
-const char *flight_get_tracking_url(const Flight *f);
 
 // Setters
 bool flight_set_departure(Flight *f, const char *dt);
@@ -45,6 +43,5 @@ bool flight_set_origin(Flight *f, const char *origin);
 bool flight_set_destination(Flight *f, const char *destination);
 bool flight_set_aircraft(Flight *f, const char *aircraft);
 bool flight_set_airline(Flight *f, const char *airline);
-bool flight_set_tracking_url(Flight *f, const char *tracking_url);
 
 #endif

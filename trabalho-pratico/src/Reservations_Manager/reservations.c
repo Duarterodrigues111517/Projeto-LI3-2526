@@ -8,10 +8,7 @@ struct Reservation {
     int   flights_count;   
     int  document_number;
     char *seat;
-    double price;
-    bool extra_luggage;
-    bool priority_boarding;
-    char *qr_code;     
+    double price;    
 };
 
 
@@ -20,10 +17,7 @@ Reservation *reservation_new(const char *reservation_id,
                              const char *flight_id2,   
                              int document_number,
                              const char *seat,
-                             double price,
-                             bool extra_luggage,
-                             bool priority_boarding,
-                             const char *qr_code)
+                             double price)
 {
     if (!reservation_id) return NULL;
     if (price < 0.0) return NULL;
@@ -35,9 +29,7 @@ Reservation *reservation_new(const char *reservation_id,
     r->document_number = document_number;
     r->seat  = strdup(seat);
     r->price = price;
-    r->extra_luggage      = extra_luggage;
-    r->priority_boarding  = priority_boarding;
-    r->qr_code            = strdup(qr_code);
+
 
     r->flights_count = 0;
     r->flight_ids[0] = NULL;
@@ -66,7 +58,6 @@ void reservation_free(Reservation *r){
     }
 
     free(r->seat);
-    free(r->qr_code);
     free(r);
 }
 
@@ -85,9 +76,6 @@ const char *reservation_get_flight_id_at(const Reservation *r, int idx){
 int        reservation_get_document_number(const Reservation *r){ return r? r->document_number: 0; }
 const char *reservation_get_seat(const Reservation *r){ return r? r->seat: NULL; }
 double     reservation_get_price(const Reservation *r){ return r? r->price: 0.0; }
-bool       reservation_get_extra_luggage(const Reservation *r){ return r? r->extra_luggage: false; }
-bool       reservation_get_priority_boarding(const Reservation *r){ return r? r->priority_boarding: false; }
-const char *reservation_get_qr_code(const Reservation *r){ return r? r->qr_code: NULL; }
 
 
 bool reservation_set_reservation_id(Reservation *r, const char *reservation_id){
@@ -137,22 +125,5 @@ bool reservation_set_seat(Reservation *r, const char *seat){
 bool reservation_set_price(Reservation *r, double price){
     if(!r) return false;
     r->price = price;
-    return true;
-}
-bool reservation_set_extra_luggage(Reservation *r, bool extra_luggage){
-    if(!r) return false;
-    r->extra_luggage = extra_luggage;
-    return true;
-}
-bool reservation_set_priority_boarding(Reservation *r, bool priority_boarding){
-    if(!r) return false;
-    r->priority_boarding = priority_boarding;
-    return true;
-}
-bool reservation_set_qr_code(Reservation *r, const char *qr_code){
-    if(!r) return false;
-    char *d=strdup(qr_code);
-    if(!d && qr_code) return false;
-    free(r->qr_code); r->qr_code=d;
     return true;
 }

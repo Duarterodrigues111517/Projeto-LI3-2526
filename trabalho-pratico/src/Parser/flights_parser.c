@@ -39,7 +39,6 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     const char *destination      = NULL;
     const char *aircraft         = NULL;
     const char *airline          = "";
-    const char *tracking_url     = "";
 
         id               = g_array_index(f, char*, 0);
         departure        = g_array_index(f, char*, 1);
@@ -52,7 +51,6 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
         destination      = g_array_index(f, char*, 8);
         aircraft         = g_array_index(f, char*, 9);
         airline          = g_array_index(f, char*, 10);
-        tracking_url     = g_array_index(f, char*, 11);
     
 
     // -------- Validações sintáticas -----------
@@ -123,8 +121,7 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
                             origin,
                             destination,
                             aircraft,
-                            airline,
-                            tracking_url);
+                            airline);
 
     flights_manager_add(mgr, fl);
     return 1;

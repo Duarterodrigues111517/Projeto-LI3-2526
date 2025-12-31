@@ -32,12 +32,7 @@ static int parse_double_strict(const char *s, double *out) {
     if (errno || end == s || *end != '\0') return 0;
     *out = v; return 1;
 }
-static int parse_bool_flex(const char *s, bool *out) {
-    if (!s) return 0;
-    if (!strcasecmp(s,"true") || !strcmp(s,"1") || !strcasecmp(s,"yes")  || !strcasecmp(s,"sim"))  { *out = true;  return 1; }
-    if (!strcasecmp(s,"false")|| !strcmp(s,"0") || !strcasecmp(s,"no")   || !strcasecmp(s,"nao")   || !strcasecmp(s,"não")) { *out = false; return 1; }
-    return 0;
-}
+
 
 static int parse_flight_ids_list_fast(const char *s, char *id1, size_t id1_sz, char *id2, size_t id2_sz, int *n_ids) {
     if (!s || !id1 || !id2 || !n_ids) return 0;
@@ -112,9 +107,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     const char *document_s        = g_array_index(f, char*, 2);
     const char *seat              = g_array_index(f, char*, 3);
     const char *price_s           = g_array_index(f, char*, 4);
-    const char *extra_luggage_s   = g_array_index(f, char*, 5);
-    const char *priority_board_s  = g_array_index(f, char*, 6);
-    const char *qr_code           = g_array_index(f, char*, 7);
+
 
     int ok = 1;
 
@@ -122,17 +115,14 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
     ok &= is_valid_reservation_id(reservation_id); // R + 9 dígitos
     ok &= is_valid_document_number(document_s);    // 9 dígitos
     ok &= is_nonempty_str(seat);                   // não vazio
-    ok &= is_nonempty_str(qr_code);                // não vazio
+               // não vazio
 
     int document_number = 0;
     double price = 0.0;
-    bool extra_luggage = false;
-    bool priority_boarding = false;
+
 
     if (ok) ok &= parse_int_strict(document_s, &document_number);
     if (ok) ok &= parse_double_strict(price_s, &price);
-    if (ok) ok &= parse_bool_flex(extra_luggage_s, &extra_luggage);
-    if (ok) ok &= parse_bool_flex(priority_board_s, &priority_boarding);
 
     // parse e validar lista de flight ids
     char flight_id1[32], flight_id2[32];
@@ -188,10 +178,7 @@ int parse_reservation_row(GArray *f, const char *raw, const char *header,
                                      flight_id2,           
                                      document_number,
                                      seat,
-                                     price,
-                                     extra_luggage,
-                                     priority_boarding,
-                                     qr_code);
+                                     price);
 
 
 

@@ -11,9 +11,6 @@ struct Passenger {
     char *nationality;   
     char *gender; 
     char *email;
-    char *phone;   
-    char *adress;     
-    char *photo;
 };
 
 Passenger *passenger_new(const char *document_number,
@@ -22,10 +19,7 @@ Passenger *passenger_new(const char *document_number,
                          const char *dob,
                          const char *nationality,
                          const char *gender,
-                         const char *email,
-                         const char *phone,
-                         const char *adress,
-                         const char *photo) {
+                         const char *email) {
     if (!document_number || strlen(document_number) == 0) return NULL;
 
     Passenger *p = calloc(1, sizeof(*p));
@@ -38,9 +32,6 @@ Passenger *passenger_new(const char *document_number,
     p->nationality = strdup(nationality);
     p->gender = strdup(gender);
     p->email = strdup(email);
-    p->phone = strdup(phone);
-    p->adress = strdup(adress);
-    p->photo = strdup(photo);
     return p;
 }
 
@@ -53,9 +44,6 @@ void passenger_free(Passenger *p) {
     free(p->nationality);
     free(p->gender);
     free(p->email);
-    free(p->phone);
-    free(p->adress);
-    free(p->photo);
     free(p);
 }
 
@@ -67,9 +55,7 @@ const char *passenger_get_dob(const Passenger *p) { return p ? p->dob : NULL; }
 const char *passenger_get_nationality(const Passenger *p) { return p ? p->nationality : NULL; }
 const char *passenger_get_gender(const Passenger *p) { return p ? p->gender : NULL; }
 const char *passenger_get_email(const Passenger *p) { return p ? p->email : NULL; }
-const char *passenger_get_phone(const Passenger *p) { return p ? p->phone : NULL; }
-const char *passenger_get_adress(const Passenger *p) { return p ? p->adress : NULL; }
-const char *passenger_get_photo(const Passenger *p) { return p ? p->photo : NULL; }
+
 
 // Setters
 bool passenger_set_document_number(Passenger *p, const char *document_number) {
@@ -87,9 +73,6 @@ bool passenger_set_dob(Passenger *p, const char *dob) { if (!p) return false; ch
 bool passenger_set_nationality(Passenger *p, const char *n) { if (!p) return false; char *d = strdup(n); if (!d && n) return false; free(p->nationality); p->nationality = d; return true; }
 bool passenger_set_gender(Passenger *p, const char *g) { if (!p) return false; char *d = strdup(g); if (!d && g) return false; free(p->gender); p->gender = d; return true; }
 bool passenger_set_email(Passenger *p, const char *e) { if (!p) return false; char *d = strdup(e); if (!d && e) return false; free(p->email); p->email = d; return true; }
-bool passenger_set_phone(Passenger *p, const char *ph) { if (!p) return false; char *d = strdup(ph); if (!d && ph) return false; free(p->phone); p->phone = d; return true; }
-bool passenger_set_adress(Passenger *p, const char *a) { if (!p) return false; char *d = strdup(a); if (!d && a) return false; free(p->adress); p->adress = d; return true; }
-bool passenger_set_photo(Passenger *p, const char *ph) { if (!p) return false; char *d = strdup(ph); if (!d && ph) return false; free(p->photo); p->photo = d; return true; }
 
 
 

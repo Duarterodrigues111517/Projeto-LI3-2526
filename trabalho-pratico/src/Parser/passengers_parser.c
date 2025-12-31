@@ -29,9 +29,6 @@ int parse_passenger_row(GArray *f, const char *raw, const char *header,
     const char *nationality     = g_array_index(f, char*, 4);
     const char *gender          = g_array_index(f, char*, 5);
     const char *email           = g_array_index(f, char*, 6);
-    const char *phone           = g_array_index(f, char*, 7);
-    const char *adress          = g_array_index(f, char*, 8);
-    const char *photo           = g_array_index(f, char*, 9);
 
     // validações sintáticas básicas
     int ok = 1;
@@ -42,9 +39,6 @@ int parse_passenger_row(GArray *f, const char *raw, const char *header,
     ok &= is_nonempty_str(nationality);
     ok &= is_valid_gender(gender);                   
     ok &= is_valid_email(email);
-    ok &= is_nonempty_str(phone);
-    ok &= is_nonempty_str(adress);
-    ok &= is_nonempty_str(photo);
 
     if (!ok) {
         ensure_errors_file(errors_fp, PASSENGERS_ERR_PATH, header);
@@ -59,10 +53,7 @@ int parse_passenger_row(GArray *f, const char *raw, const char *header,
                                  dob,
                                  nationality,
                                  gender,
-                                 email,
-                                 phone,
-                                 adress,
-                                 photo);
+                                 email);
 
     passengers_manager_add(mgr, p);
     return 1;

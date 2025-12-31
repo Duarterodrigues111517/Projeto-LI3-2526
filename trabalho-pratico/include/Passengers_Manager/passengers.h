@@ -12,10 +12,7 @@ Passenger *passenger_new(const char *document_number,
                          const char *dob,
                          const char *nationality,
                          const char *gender,
-                         const char *email,
-                         const char *phone,
-                         const char *adress,
-                         const char *photo);
+                         const char *email);
 void passenger_free(Passenger *p);
 
 // Getters
@@ -26,9 +23,6 @@ const char *passenger_get_dob(const Passenger *p);
 const char *passenger_get_nationality(const Passenger *p);
 const char *passenger_get_gender(const Passenger *p);
 const char *passenger_get_email(const Passenger *p);
-const char *passenger_get_phone(const Passenger *p);
-const char *passenger_get_adress(const Passenger *p);
-const char *passenger_get_photo(const Passenger *p);
 
 // Setters
 bool passenger_set_document_number(Passenger *p, const char *document_number);
@@ -38,9 +32,6 @@ bool passenger_set_dob(Passenger *p, const char *dob);
 bool passenger_set_nationality(Passenger *p, const char *nationality);
 bool passenger_set_gender(Passenger *p, const char *gender);
 bool passenger_set_email(Passenger *p, const char *email);
-bool passenger_set_phone(Passenger *p, const char *phone);
-bool passenger_set_adress(Passenger *p, const char *adress);
-bool passenger_set_photo(Passenger *p, const char *photo);
 
 #endif
 
