@@ -52,8 +52,7 @@ int parse_passenger_row(GArray *f, const char *raw, const char *header,
                                  last_name,
                                  dob,
                                  nationality,
-                                 gender,
-                                 email);
+                                 gender);
 
     passengers_manager_add(mgr, p);
     return 1;

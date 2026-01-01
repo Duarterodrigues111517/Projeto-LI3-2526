@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude `pkg-config --cflags glib-2.0`
-LDFLAGS = `pkg-config --libs glib-2.0`
+LDFLAGS = `pkg-config --libs glib-2.0` -lm
 
 SRC_DIR = src
 INC_DIR = include

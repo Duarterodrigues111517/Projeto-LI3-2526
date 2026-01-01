@@ -2,7 +2,6 @@
 #define QUERY5_H
 
 #include "Flights_Manager/flights_manager.h"
-
 /*
   args: normalmente é o N (top N companhias).
   sep: separador do output (';' ou outro).
