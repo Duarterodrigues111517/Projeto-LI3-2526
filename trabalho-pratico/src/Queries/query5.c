@@ -15,7 +15,7 @@ static int cmp_q5_rows_qsort(const void *a, const void *b) {
     const Q5Row *ra = (const Q5Row *)a;
     const Q5Row *rb = (const Q5Row *)b;
 
-    if (ra->avg_delay == rb->avg_delay) return strcmp(rb->airline, ra->airline);
+    if (roundf(ra->avg_delay*1000) == roundf(rb->avg_delay*1000))return strcmp(rb->airline, ra->airline);
 
     /* avg_delay desc */
     if (roundf(ra->avg_delay*1000) < roundf(rb->avg_delay*1000)) return 1;

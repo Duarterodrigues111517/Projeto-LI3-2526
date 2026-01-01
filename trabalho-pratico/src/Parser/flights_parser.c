@@ -56,8 +56,9 @@ int parse_flight_row(GArray *f, const char *raw, const char *header,
     // -------- Validações sintáticas -----------
 
     int ok = 1;
-    ok &= is_valid_flight_id(id);      
+    ok &= is_valid_flight_id(id);   
     ok &= is_valid_iata3(origin);
+
 
     ok &= is_valid_iata3(destination);
     ok &= (strcmp(origin, destination) != 0);

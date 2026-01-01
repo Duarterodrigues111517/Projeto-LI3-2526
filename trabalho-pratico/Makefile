@@ -10,7 +10,6 @@ RESULTS_DIR = resultados
 
 MAIN_EXEC   = programa-principal
 TEST_EXEC   = programa-testes
-PARSER_EXEC = test_parser
 INTER_EXEC  = programa-interativo
 
 # todos os .c
@@ -28,7 +27,7 @@ COMMON_OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(COMMON_SRC))
 MAIN_OBJ    := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(MAIN_SRC))
 INTER_OBJ   := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(INTER_SRC))
 
-all: dirs $(MAIN_EXEC) $(INTER_EXEC) $(TEST_EXEC) $(PARSER_EXEC)
+all: dirs $(MAIN_EXEC) $(INTER_EXEC) $(TEST_EXEC) 
 
 dirs:
 	@mkdir -p $(OBJ_DIR)
@@ -44,8 +43,6 @@ $(INTER_EXEC): $(COMMON_OBJS) $(INTER_OBJ)
 $(TEST_EXEC): $(COMMON_OBJS) $(MAIN_OBJ)
 	$(CC) $^ $(LDFLAGS) -o $@
 
-$(PARSER_EXEC): $(COMMON_OBJS) $(MAIN_OBJ)
-	$(CC) $^ $(LDFLAGS) -o $@
 
 # compilação genérica
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -54,7 +51,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	rm -rf $(OBJ_DIR)
-	rm -f programa-principal programa-interativo programa-testes test_parser
+	rm -f programa-principal programa-interativo programa-testes 
 	rm -f $(RESULTS_DIR)/command*_output.txt
 	rm -f resultados/*_errors.csv
 
