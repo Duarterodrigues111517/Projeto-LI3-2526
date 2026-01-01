@@ -44,7 +44,7 @@ static void trim_newline(char *s) {
 
 static char *read_line_prompt(const char *prompt) {
     if (prompt) {
-        fputs(prompt, stdout);
+        printf("%s", prompt);
         fflush(stdout);
     }
 
@@ -60,7 +60,6 @@ static char *read_line_prompt(const char *prompt) {
 }
 
 static int ensure_results_dir(void) {
-    // cria "resultados/" se não existir
     struct stat st;
     if (stat(OUTPUT_DIR, &st) == 0) {
         if (S_ISDIR(st.st_mode)) return 1;
@@ -112,14 +111,12 @@ static AppData *appdata_load(const char *dataset_dir) {
         return NULL;
     }
 
-    // Reutiliza exatamente o mesmo fluxo do teu main.c
     app->airports     = parse_airports_file(airports_file);
     app->aircrafts    = parse_aircrafts_file(aircrafts_file);
     app->flights      = parse_flights_file(flights_file, app->aircrafts);
     app->passengers   = parse_passengers_file(passengers_file);
     app->reservations = parse_reservations_file(reservations_file, app->flights, app->passengers);
 
-    // pré-cálculos
     airports_manager_compute_passenger_counts(app->airports, app->flights, app->reservations);
 
     app->q6_table = g_hash_table_new_full(g_str_hash, g_str_equal, free, (GDestroyNotify)g_hash_table_destroy);
@@ -137,7 +134,6 @@ static AppData *appdata_load(const char *dataset_dir) {
 static void appdata_free(AppData *app) {
     if (!app) return;
 
-    // segue o padrão do teu main.c
     if (app->airports)     airports_manager_free(app->airports);
     if (app->aircrafts)    aircrafts_manager_free(app->aircrafts);
     if (app->flights)      flights_manager_free(app->flights);
@@ -152,31 +148,10 @@ static void appdata_free(AppData *app) {
 
 /* ---------- interactive execution ---------- */
 
-static void print_menu(void) {
-    puts("\n=== Programa Interativo (Fase 2) ===");
-    puts("1) Executar query (escrever uma linha no formato do input.txt)");
-    puts("2) Recarregar dataset");
-    puts("0) Sair");
-}
-
-static void print_query_help(void) {
-    puts("\nFormato da linha (igual ao input.txt):");
-    puts("  <QID>[S] <args>");
-    puts("Exemplos:");
-    puts("  1 ABC");
-    puts("  1S ABC");
-    puts("  2 10 Boeing");
-    puts("  3 2025-01-01 2025-12-31");
-    puts("  5 20");
-    puts("  6 PT");
-    puts("Nota: o 'S' (ex: 1S, 2S, ...) ativa o formato alternativo.");
-}
-
 static int run_single_query_line(AppData *app, const char *query_line) {
     if (!app || !query_line) return 0;
     if (!ensure_results_dir()) return 0;
 
-    // 1) escrever temp input com 1 linha
     const char *tmp_input = OUTPUT_DIR "input_interativo_tmp.txt";
     FILE *fi = fopen(tmp_input, "w");
     if (!fi) {
@@ -186,10 +161,8 @@ static int run_single_query_line(AppData *app, const char *query_line) {
     fprintf(fi, "%s\n", query_line);
     fclose(fi);
 
-    // 2) executar parser de queries (vai gerar resultados/command1_output.txt)
     parse_queries(tmp_input, app->airports, app->aircrafts, app->flights, app->q6_table);
 
-    // 3) ler e imprimir o output
     const char *out_path = OUTPUT_DIR "command1_output.txt";
     FILE *fo = fopen(out_path, "r");
     if (!fo) {
@@ -197,97 +170,147 @@ static int run_single_query_line(AppData *app, const char *query_line) {
         return 0;
     }
 
-    puts("\n--- OUTPUT ---");
+    printf("Output: ");
     int c;
     while ((c = fgetc(fo)) != EOF) putchar(c);
     if (ferror(fo)) perror("ler output");
     fclose(fo);
-    puts("--- FIM ---");
 
-    // 4) limpar ficheiros temporários (opcional)
     remove(tmp_input);
     remove(out_path);
 
     return 1;
 }
 
+static void process_query(AppData *app, const char *query_input) {
+    // Parse query number and optional 'S' flag
+    char *input_copy = strdup(query_input);
+    if (!input_copy) return;
+    
+    char *token = strtok(input_copy, " ");
+    if (!token) {
+        free(input_copy);
+        return;
+    }
+    
+    int query_num = 0;
+    int format_flag = 0; // 0 for normal, 1 for 'S' format
+    
+    // Check if token ends with 'S'
+    size_t len = strlen(token);
+    if (len > 1 && token[len-1] == 'S') {
+        format_flag = 1;
+        token[len-1] = '\0'; // Remove the 'S'
+    }
+    
+    query_num = atoi(token);
+    free(input_copy);
+    
+    if (query_num < 1 || query_num > 6) {
+        printf("Query inválida. Use queries de 1 a 6.\n");
+        return;
+    }
+    
+    // Build the query line based on query type
+    char query_line[1024];
+    char *args = NULL;
+    
+    switch (query_num) {
+        case 1:
+            args = read_line_prompt("Código do aeroporto: ");
+            if (!args) return;
+            snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                    query_num, format_flag ? "S" : "", args);
+            break;
+            
+        case 2:
+            args = read_line_prompt("Número e fabricante (ex: 10 Boeing): ");
+            if (!args) return;
+            snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                    query_num, format_flag ? "S" : "", args);
+            break;
+            
+        case 3:
+            args = read_line_prompt("Datas (YYYY-MM-DD YYYY-MM-DD): ");
+            if (!args) return;
+            snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                    query_num, format_flag ? "S" : "", args);
+            break;
+            
+        case 4:
+            args = read_line_prompt("Datas (YYYY-MM-DD YYYY-MM-DD) ou enter para todas: ");
+            if (!args) return;
+            if (strlen(args) == 0) {
+                snprintf(query_line, sizeof(query_line), "%d%s", 
+                        query_num, format_flag ? "S" : "");
+            } else {
+                snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                        query_num, format_flag ? "S" : "", args);
+            }
+            break;
+            
+        case 5:
+            args = read_line_prompt("Número: ");
+            if (!args) return;
+            snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                    query_num, format_flag ? "S" : "", args);
+            break;
+            
+        case 6:
+            args = read_line_prompt("País: ");
+            if (!args) return;
+            snprintf(query_line, sizeof(query_line), "%d%s %s", 
+                    query_num, format_flag ? "S" : "", args);
+            break;
+            
+        default:
+            printf("Query não implementada.\n");
+            return;
+    }
+    
+    run_single_query_line(app, query_line);
+    free(args);
+}
+
 int main(void) {
     AppData *app = NULL;
 
-    puts("Programa Interativo (Fase 2)");
-    puts("Introduz o caminho para a pasta do dataset (onde estão airports.csv, flights.csv, ...).");
-    puts("Exemplo: datasets/D1");
-
-    while (!app) {
-        char *dir = read_line_prompt("Dataset path: ");
-        if (!dir) {
-            puts("\nEOF recebido. A sair.");
-            return 0;
-        }
-        if (dir[0] == '\0') {
-            free(dir);
-            puts("Caminho vazio. Tenta novamente.");
-            continue;
-        }
-
-        app = appdata_load(dir);
-        if (!app) {
-            puts("Falha a carregar dataset. Confirma o caminho e tenta novamente.");
-        } else {
-            puts("Dataset carregado com sucesso.");
-        }
+    char *dir = read_line_prompt("Introduza o caminho dos ficheiros de dados: ");
+    if (!dir) {
+        printf("\nEOF recebido. A sair.\n");
+        return 0;
+    }
+    
+    if (dir[0] == '\0') {
+        printf("Caminho vazio.\n");
         free(dir);
+        return 1;
     }
 
-    for (;;) {
-        print_menu();
-        char *opt = read_line_prompt("Opção: ");
-        if (!opt) break;
+    app = appdata_load(dir);
+    if (!app) {
+        printf("Falha a carregar dataset.\n");
+        free(dir);
+        return 1;
+    }
+    
+    printf("Dataset carregado...\n");
+    free(dir);
 
-        if (strcmp(opt, "0") == 0) {
-            free(opt);
+    // Main query loop
+    while (1) {
+        char *query = read_line_prompt("Que query deseja executar? ");
+        if (!query) break;
+        
+        if (query[0] == '\0' || strcmp(query, "0") == 0) {
+            free(query);
             break;
-        } else if (strcmp(opt, "1") == 0) {
-            free(opt);
-            print_query_help();
-            char *line = read_line_prompt("Query line: ");
-            if (!line) break;
-
-            if (line[0] == '\0') {
-                puts("Linha vazia -> ignorado.");
-                free(line);
-                continue;
-            }
-
-            (void)run_single_query_line(app, line);
-            free(line);
-        } else if (strcmp(opt, "2") == 0) {
-            free(opt);
-            char *dir = read_line_prompt("Novo dataset path: ");
-            if (!dir) break;
-
-            if (dir[0] == '\0') {
-                puts("Caminho vazio -> não recarreguei.");
-                free(dir);
-                continue;
-            }
-
-            AppData *new_app = appdata_load(dir);
-            if (!new_app) {
-                puts("Falha a carregar novo dataset. Mantive o anterior.");
-            } else {
-                appdata_free(app);
-                app = new_app;
-                puts("Dataset recarregado com sucesso.");
-            }
-            free(dir);
-        } else {
-            puts("Opção inválida.");
-            free(opt);
         }
+        
+        process_query(app, query);
+        free(query);
     }
 
     appdata_free(app);
-    puts("Até já!");
     return 0;
 }
