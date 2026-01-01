@@ -14,12 +14,12 @@ static int cmp_q5_rows_qsort(const void *a, const void *b) {
     const Q5Row *ra = (const Q5Row *)a;
     const Q5Row *rb = (const Q5Row *)b;
 
+    if (ra->avg_delay == rb->avg_delay) return strcmp(rb->airline, ra->airline);
+
     /* avg_delay desc */
     if (ra->avg_delay < rb->avg_delay) return 1;
     if (ra->avg_delay > rb->avg_delay) return -1;
-
-    /* tie: airline asc */
-    return strcmp(rb->airline, ra->airline);
+    return 0;
 }
 
 void querie5(const char *args, char sep, FlightsManager_t *fm, const char *output_path)
@@ -81,7 +81,6 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
 
         rows[n_rows].airline = strdup(airline); /* segurança */
         if (!rows[n_rows].airline) continue;
-
         rows[n_rows].delayed_count = st->delayed_count;
         rows[n_rows].avg_delay =
             (double)st->total_delay_minutes / (double)st->delayed_count;
@@ -98,6 +97,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
 
     /* 3) sort com qsort */
     qsort(rows, n_rows, sizeof(Q5Row), cmp_q5_rows_qsort);
+
 
     /* 4) output top N */
     size_t limit = (N < (int)n_rows) ? (size_t)N : n_rows;
