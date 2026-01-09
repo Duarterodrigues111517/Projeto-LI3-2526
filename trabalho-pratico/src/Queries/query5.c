@@ -6,7 +6,7 @@
 #include <math.h>
 
 typedef struct {
-    char *airline;        /* duplicado para ser seguro fora da hash */
+    char *airline;        
     long delayed_count;
     double avg_delay;
 } Q5Row;
@@ -17,12 +17,13 @@ static int cmp_q5_rows_qsort(const void *a, const void *b) {
 
     if (roundf(ra->avg_delay*1000) == roundf(rb->avg_delay*1000))return strcmp(ra->airline, rb->airline);
 
-    /* avg_delay desc */
+    // Ordena por atraso médio em ordem decrescente
     if (roundf(ra->avg_delay*1000) < roundf(rb->avg_delay*1000)) return 1;
     if (roundf(ra->avg_delay*1000) > roundf(rb->avg_delay*1000)) return -1;
     return 0;
 }
 
+// Executa a query 5 e escreve o top N de companhias com maior atraso médio
 void querie5(const char *args, char sep, FlightsManager_t *fm, const char *output_path)
 {
     if (!output_path) return;
@@ -39,7 +40,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         return;
     }
 
-    /* N */
+    // Lê e valida o valor N correspondente ao número de companhias a listar
     int N = 0;
     if (args && *args) {
         char *end = NULL;
@@ -59,7 +60,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         return;
     }
 
-    /* 1) contar quantas linhas válidas vamos ter */
+    // conta quantas linhas válidas vamos ter 
     size_t cap = g_hash_table_size(tab);
     Q5Row *rows = malloc(sizeof(Q5Row) * cap);
     if (!rows) {
@@ -70,7 +71,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
 
     size_t n_rows = 0;
 
-    /* 2) preencher array */
+    // preenche array 
     GHashTableIter it;
     gpointer key, val;
     g_hash_table_iter_init(&it, tab);
@@ -80,7 +81,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         const Q5AirlineStat *st = (const Q5AirlineStat *)val;
         if (!st || st->delayed_count <= 0) continue;
 
-        rows[n_rows].airline = strdup(airline); /* segurança */
+        rows[n_rows].airline = strdup(airline); 
         if (!rows[n_rows].airline) continue;
         rows[n_rows].delayed_count = st->delayed_count;
         rows[n_rows].avg_delay =
@@ -96,11 +97,11 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
         return;
     }
 
-    /* 3) sort com qsort */
+    // sort com qsort 
     qsort(rows, n_rows, sizeof(Q5Row), cmp_q5_rows_qsort);
 
 
-    /* 4) output top N */
+    // output top N 
     size_t limit = (N < (int)n_rows) ? (size_t)N : n_rows;
     for (size_t i = 0; i < limit; i++) {
         fprintf(out, "%s%c%ld%c%.3f\n",
@@ -109,7 +110,7 @@ void querie5(const char *args, char sep, FlightsManager_t *fm, const char *outpu
                 rows[i].avg_delay);
     }
 
-    /* 5) free */
+    // free 
     for (size_t i = 0; i < n_rows; i++) {
         free(rows[i].airline);
     }

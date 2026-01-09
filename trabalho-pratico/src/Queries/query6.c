@@ -5,16 +5,7 @@
 #include <stdio.h>
 #include <glib.h>
 
-/*
-  q6_table:
-    key   = nationality (char*)
-    value = GHashTable* dest_counts
-
-  dest_counts:
-    key   = destination airport code (char*)
-    value = int* (count)
-*/
-
+// Estrutura usada na query 6 para contar destinos por nacionalidade
 static void free_int_ptr(gpointer p) {
     free(p);
 }
@@ -37,7 +28,7 @@ static void q6_add_arrival_with_count(GHashTable *q6_table, const char *nat,
         *cnt = 0;
         g_hash_table_insert(dest_counts, strdup(dest), cnt);
     }
-    (*cnt) ++;  // Add the number of passengers, not just 1
+    (*cnt) ++;  // Adiciona o número de passageiros, e não apenas 1
 }
 
 static void q6_process_reservation(Reservation *r, void *user_data) {
@@ -74,7 +65,7 @@ static void q6_process_reservation(Reservation *r, void *user_data) {
         const char *dest = flight_get_destination(f);
         if (!dest) continue;
 
-        // Count ALL passengers in this reservation as arriving at this destination
+        // Conta TODOS os passageiros desta reserva como tendo chegado a este destino
         q6_add_arrival_with_count(ctx->q6, nat, dest);
     }
 }

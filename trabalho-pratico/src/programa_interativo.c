@@ -22,8 +22,7 @@
 
 
 
-/* helpers básicos                                       */
-
+// helpers básicos                                      
 
 static void trim_newline(char *s) {
     if (!s) return;
@@ -75,7 +74,7 @@ static int read_positive_int(const char *prompt) {
 }
 
 
-/* parsing do número da query (1, 1S, etc)               */
+// parsing do número da query (1, 1S, etc)               
 
 
 static int parse_query(const char *s, int *qid, char *sep) {
@@ -102,7 +101,7 @@ static int parse_query(const char *s, int *qid, char *sep) {
 }
 
 
-/* main                                                  */
+// main                                                  
 
 
 int main(void) {
@@ -113,7 +112,7 @@ int main(void) {
         dataset, sizeof(dataset)
     );
 
-    /* construir caminhos */
+    // construir caminhos 
     char airports_p[PATH_BUF], aircrafts_p[PATH_BUF], flights_p[PATH_BUF];
     char passengers_p[PATH_BUF], reservations_p[PATH_BUF];
 
@@ -123,7 +122,7 @@ int main(void) {
     snprintf(passengers_p,   sizeof(passengers_p),   "%s/passengers.csv",   dataset);
     snprintf(reservations_p, sizeof(reservations_p), "%s/reservations.csv", dataset);
 
-    /* carregar dados */
+    // carregar dados 
     AirportsManager_t     *am = parse_airports_file(airports_p);
     AircraftsManager_t    *acm = parse_aircrafts_file(aircrafts_p);
     FlightsManager_t      *fm = parse_flights_file(flights_p, acm);
@@ -166,7 +165,7 @@ int main(void) {
         }
 
         
-        /* QUERY 1                 */
+        // QUERY 1                 
         
         if (qid == 1) {
             char code[BUF];
@@ -175,7 +174,7 @@ int main(void) {
         }
 
         
-        /* QUERY 2                 */
+        // QUERY 2                 
         
         else if (qid == 2) {
             int N = read_positive_int("Top N: ");
@@ -192,7 +191,7 @@ int main(void) {
         }
 
         
-        /* QUERY 3                 */
+        // QUERY 3                 
         
         else if (qid == 3) {
             char d1[BUF], d2[BUF];
@@ -203,14 +202,14 @@ int main(void) {
         }
 
 
-        /* QUERY 4 (não feita)     */
+        // QUERY 4 (não feita)     
         
         else if (qid == 4) {
             printf("Query 4 não está implementada.\n");
         }
 
         
-        /* QUERY 5                 */
+        // QUERY 5                 
         
         else if (qid == 5) {
             int N = read_positive_int("Top N companhias: ");
@@ -222,7 +221,7 @@ int main(void) {
         }
 
         
-        /* QUERY 6                 */
+        // QUERY 6                 
         
         else if (qid == 6) {
             char nat[BUF];

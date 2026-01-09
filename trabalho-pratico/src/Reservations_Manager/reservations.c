@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// estrutura interna das reservas
 struct Reservation {
     char *reservation_id;
     char *flight_ids[2];   
@@ -61,6 +62,7 @@ void reservation_free(Reservation *r){
     free(r);
 }
 
+// getters
 const char *reservation_get_reservation_id(const Reservation *r){ return r? r->reservation_id: NULL; }
 const char *reservation_get_flight_id(const Reservation *r){
     return (r && r->flights_count > 0) ? r->flight_ids[0] : NULL;
@@ -77,7 +79,7 @@ int        reservation_get_document_number(const Reservation *r){ return r? r->d
 const char *reservation_get_seat(const Reservation *r){ return r? r->seat: NULL; }
 double     reservation_get_price(const Reservation *r){ return r? r->price: 0.0; }
 
-
+// setters
 bool reservation_set_reservation_id(Reservation *r, const char *reservation_id){
     if(!r) return false;
     free(r->reservation_id);
