@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     }
 
     const char *datasetDir = argv[1];
-    const char *inputFile = argv[2]; // usa quando fores ler as queries
+    const char *inputFile = argv[2]; 
     const char *outputDir = OUTPUT_DIR;
     (void)outputDir; 
     char *airports_file = malloc(strlen(datasetDir) + strlen("/airports.csv") + 1);

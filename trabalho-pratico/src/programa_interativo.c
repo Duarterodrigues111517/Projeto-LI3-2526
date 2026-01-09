@@ -19,9 +19,9 @@
 
 #define BUF 512
 
-/* ----------------------------------------------------- */
+
 /* helpers básicos                                       */
-/* ----------------------------------------------------- */
+
 
 static void trim_newline(char *s) {
     if (!s) return;
@@ -138,10 +138,6 @@ int main(void) {
 
     printf("\nDataset carregado com sucesso.\n");
 
-    /* ------------------------------------------------- */
-    /* loop interativo                                   */
-    /* ------------------------------------------------- */
-
     while (1) {
         char qline[BUF];
         int qid = 0;
@@ -167,18 +163,18 @@ int main(void) {
             continue;
         }
 
-        /* ----------------------- */
+        
         /* QUERY 1                 */
-        /* ----------------------- */
+        
         if (qid == 1) {
             char code[BUF];
             read_line_or_exit("Código do aeroporto: ", code, sizeof(code));
             querie1(code, sep, am, "/dev/stdout");
         }
 
-        /* ----------------------- */
+        
         /* QUERY 2                 */
-        /* ----------------------- */
+        
         else if (qid == 2) {
             int N = read_positive_int("Top N: ");
 
@@ -193,9 +189,9 @@ int main(void) {
             querie2(N, man, sep, acm, fm, "/dev/stdout");
         }
 
-        /* ----------------------- */
+        
         /* QUERY 3                 */
-        /* ----------------------- */
+        
         else if (qid == 3) {
             char d1[BUF], d2[BUF];
             read_line_or_exit("Data inicial (YYYY-MM-DD): ", d1, sizeof(d1));
@@ -204,16 +200,16 @@ int main(void) {
             querie3(d1, d2, sep, am, fm, "/dev/stdout");
         }
 
-        /* ----------------------- */
+        
         /* QUERY 4 (não feita)     */
-        /* ----------------------- */
+        
         else if (qid == 4) {
             printf("Query 4 não está implementada.\n");
         }
 
-        /* ----------------------- */
+        
         /* QUERY 5                 */
-        /* ----------------------- */
+        
         else if (qid == 5) {
             int N = read_positive_int("Top N companhias: ");
 
@@ -223,9 +219,9 @@ int main(void) {
             querie5(nbuf, sep, fm, "/dev/stdout");
         }
 
-        /* ----------------------- */
+        
         /* QUERY 6                 */
-        /* ----------------------- */
+        
         else if (qid == 6) {
             char nat[BUF];
             read_line_or_exit("Nacionalidade: ", nat, sizeof(nat));
@@ -237,7 +233,6 @@ int main(void) {
         }
     }
 
-    /* cleanup */
     airports_manager_free(am);
     aircrafts_manager_free(acm);
     flights_manager_free(fm);
