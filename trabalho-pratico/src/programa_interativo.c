@@ -17,7 +17,9 @@
 #include "Queries/query5.h"
 #include "Queries/query6.h"
 
-#define BUF 512
+#define BUF 512 
+#define PATH_BUF 1024
+
 
 
 /* helpers básicos                                       */
@@ -112,8 +114,8 @@ int main(void) {
     );
 
     /* construir caminhos */
-    char airports_p[BUF], aircrafts_p[BUF], flights_p[BUF];
-    char passengers_p[BUF], reservations_p[BUF];
+    char airports_p[PATH_BUF], aircrafts_p[PATH_BUF], flights_p[PATH_BUF];
+    char passengers_p[PATH_BUF], reservations_p[PATH_BUF];
 
     snprintf(airports_p,     sizeof(airports_p),     "%s/airports.csv",     dataset);
     snprintf(aircrafts_p,    sizeof(aircrafts_p),    "%s/aircrafts.csv",    dataset);
@@ -242,3 +244,4 @@ int main(void) {
 
     return 0;
 }
+
