@@ -159,7 +159,7 @@ int main(void) {
         }
 
         if (!parse_query(qline, &qid, &sep)) {
-            printf("Query inválida. Tente novamente.\n");
+            printf("Entrada inválida. Introduza um número de query válido (ex: 1 ou 1S).\n");
             continue;
         }
 

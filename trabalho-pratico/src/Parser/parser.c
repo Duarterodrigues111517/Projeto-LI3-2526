@@ -1,6 +1,6 @@
 #include "Parser/parser.h"
 
-// Função para dar free aos elementos do GArray
+
 void free_garray_parsed_elements(GArray *array) {
     for (guint i = 0; i < array->len; i++) {
         g_free(g_array_index(array, char *, i));
@@ -16,13 +16,13 @@ void free_garray_parsed_elements(GArray *array) {
 
     *lineCopy = strdup(line);
 
-    // remove \n e \r finais
+    
     while (n > 0 && (line[n-1] == '\n' || line[n-1] == '\r')) line[--n] = '\0';
 
-    // limpa o array de tokens anterior
+    
     free_garray_parsed_elements(array);
 
-    // parser de CSV com aspas 
+    
     GString *field = g_string_new(NULL);
     int in_quotes = 0;
     for (ssize_t i = 0; i < n; i++) {
