@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// estrutura interna dos passageiros
 struct Passenger {
     char *document_number;  
     char *first_name;

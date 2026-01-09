@@ -51,18 +51,18 @@ static int parse_flight_ids_list_fast(const char *s, char *id1, size_t id1_sz, c
         while (p < end && isspace((unsigned char)*p)) p++;
         if (p >= end) break;
 
-        // Expect optional quote '
+        // Verifica e ignora aspas iniciais, se existirem
         if (*p == '\'') p++;
 
-        // Read token until quote or comma or end
+        // Lê o token até encontrar aspas, vírgula ou o fim da string
         const char *start = p;
         while (p < end && *p != '\'' && *p != ',' ) p++;
         const char *stop = p;
 
-        // Skip closing quote if present
+        // Ignora aspas de fecho, se existirem
         if (p < end && *p == '\'') p++;
 
-        // Trim trailing spaces inside token
+        // Remove espaços em branco no final do token
         while (stop > start && isspace((unsigned char)stop[-1])) stop--;
 
         size_t tlen = (size_t)(stop - start);
@@ -76,12 +76,13 @@ static int parse_flight_ids_list_fast(const char *s, char *id1, size_t id1_sz, c
                 memcpy(id2, start, tlen);
                 id2[tlen] = '\0';
             } else {
-                return 0; // >2 ids invalid
+                return 0;  // Mais de dois identificadores é inválido
             }
             (*n_ids)++;
         }
 
-        // Move to next (skip spaces and optional comma)
+        
+        // Avança para o próximo token, ignorando espaços e vírgula opcional
         while (p < end && isspace((unsigned char)*p)) p++;
         if (p < end && *p == ',') p++;
     }
