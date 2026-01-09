@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 struct Aircraft {
     char *id;
     char *manufacturer;
