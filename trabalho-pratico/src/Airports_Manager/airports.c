@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// estrutura interna do aeroporto
 struct Airport {
     char   *code;     
     char   *name;
@@ -46,6 +47,7 @@ void airport_free(Airport *a){
     free(a);
 }
 
+// getters
 const char *airport_get_code(const Airport *a){ return a? a->code: NULL; }
 const char *airport_get_name(const Airport *a){ return a? a->name: NULL; }
 const char *airport_get_city(const Airport *a){ return a? a->city: NULL; }
@@ -57,6 +59,7 @@ double airport_get_longitude(const Airport *a){ return a? a->longitude: 0.0; }
 int airport_get_arrival_count(const Airport *a){ return a? a->arrival_count: 0; }
 int airport_get_departure_count(const Airport *a){ return a? a->departure_count: 0; }
 
+// setters 
 bool airport_set_code(Airport *a, const char *code){ if(!a) return false; char *d=strdup(code); if(!d && code) return false; free(a->code); a->code=d; return true; }
 bool airport_set_name(Airport *a, const char *name){ if(!a) return false; char *d=strdup(name); if(!d && name) return false; free(a->name); a->name=d; return true; }
 bool airport_set_city(Airport *a, const char *city){ if(!a) return false; char *d=strdup(city); if(!d && city) return false; free(a->city); a->city=d; return true; }

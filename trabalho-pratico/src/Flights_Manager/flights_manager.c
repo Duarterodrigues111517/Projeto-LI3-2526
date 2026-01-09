@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ---- helper: datetime "YYYY-MM-DD HH:MM" -> minutos absolutos ---- */
+
 static int is_leap(int y) {
     return (y % 400 == 0) || (y % 4 == 0 && y % 100 != 0);
 }
@@ -15,23 +15,15 @@ static int days_in_month(int y, int m) {
 }
 
 static long long days_from_civil(int y, int m, int d) {
-    /* Convert date to days since epoch (1970-01-01) */
-    /* Using a simpler, more reliable algorithm */
-    
     long long total_days = 0;
-    
-    /* Add days for complete years from 1970 to y-1 */
     for (int year = 1970; year < y; year++) {
         total_days += is_leap(year) ? 366 : 365;
     }
-    
-    /* Add days for complete months in year y */
     for (int month = 1; month < m; month++) {
         total_days += days_in_month(y, month);
     }
     
-    /* Add remaining days */
-    total_days += d - 1;  /* -1 because day 1 = 0 days elapsed */
+    total_days += d - 1;  
     
     return total_days;
 }
@@ -50,7 +42,6 @@ static int parse_datetime_minutes(const char *s, long long *out_minutes) {
     return 1;
 }
 
-/* Destroy */
 void destroy_flight(void *f) {
     flight_free((Flight *)f);
 }
@@ -62,11 +53,10 @@ static void destroy_q5_stat(void *p) {
 struct FlightsManager {
     GHashTable *flights_table;
 
-    /* Q5: key airline (strdup) -> Q5AirlineStat* */
     GHashTable *q5_airline_stats;
 };
 
-/* Create */
+
 FlightsManager_t *flights_manager_new(void) {
     FlightsManager_t *fm = malloc(sizeof(FlightsManager_t));
     if (!fm) return NULL;
@@ -97,7 +87,7 @@ FlightsManager_t *flights_manager_new(void) {
     return fm;
 }
 
-/* Free memory */
+
 void flights_manager_free(FlightsManager_t *fm) {
     if (!fm) return;
     g_hash_table_destroy(fm->flights_table);
@@ -105,12 +95,12 @@ void flights_manager_free(FlightsManager_t *fm) {
     free(fm);
 }
 
-/* Q5 getter */
+
 GHashTable *flights_manager_get_q5_table(const FlightsManager_t *fm) {
     return fm ? fm->q5_airline_stats : NULL;
 }
 
-/* Q5 updater */
+
 void flights_manager_update_q5(FlightsManager_t *fm, const Flight *f) {
     if (!fm || !f) return;
 
@@ -143,17 +133,17 @@ void flights_manager_update_q5(FlightsManager_t *fm, const Flight *f) {
     st->total_delay_minutes += delay;
 }
 
-/* Add flight */
+
 void flights_manager_add(FlightsManager_t *fm, Flight *f) {
     if (!fm || !f) return;
 
-    /* atualiza Q5 em O(1) */
+    
     flights_manager_update_q5(fm, f);
 
     g_hash_table_insert(fm->flights_table, g_strdup(flight_get_id(f)), f);
 }
 
-/* Get flight */
+
 Flight *flights_manager_get(const FlightsManager_t *fm, const char *id) {
     if (!fm || !id) return NULL;
     return (Flight *)g_hash_table_lookup(fm->flights_table, id);

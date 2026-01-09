@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+// estrutura interna da aeronave
 struct Aircraft {
     char *id;
     char *manufacturer;
@@ -43,6 +43,7 @@ void aircraft_free(Aircraft *a){
     free(a);
 }
 
+// getters
 const char *aircraft_get_id(const Aircraft *a){ return a? a->id: NULL; }
 const char *aircraft_get_model(const Aircraft *a){ return a? a->model: NULL; }
 const char *aircraft_get_manufacturer(const Aircraft *a){ return a? a->manufacturer: NULL; }
@@ -50,6 +51,7 @@ int         aircraft_get_capacity(const Aircraft *a){ return a? a->capacity: 0; 
 int        aircraft_get_range(const Aircraft *a){ return a? a->range: 0; }
 int        aircraft_get_year(const Aircraft *a){ return a? a->year: 0; }
 
+// setters
 bool aircraft_set_id(Aircraft *a, const char *id){ 
     if(!a || !id) return false;
     if (strlen(id) == 0) return false;

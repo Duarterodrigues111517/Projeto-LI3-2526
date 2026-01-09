@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// estrutura interna do voo
 typedef struct Flight {
     char *id;
     char *departure;
@@ -16,9 +17,6 @@ typedef struct Flight {
     char *aircraft;
     char *airline;
 } Flight;
-
-
-
 
 Flight *flight_new(const char *id,
     const char *departure,
@@ -67,6 +65,7 @@ void flight_free(Flight *f){
     free(f);
 }
 
+// getters
 const char *flight_get_id(const Flight *f){ return f? f->id: NULL; }
 const char *flight_get_departure(const Flight *f){ return f? f->departure: NULL; }
 const char *flight_get_actual_departure(const Flight *f){ return f? f->actual_departure: NULL; }
@@ -79,7 +78,7 @@ const char *flight_get_destination(const Flight *f){ return f? f->destination: N
 const char *flight_get_aircraft(const Flight *f){ return f? f->aircraft: NULL; }
 const char *flight_get_airline(const Flight *f){ return f? f->airline: NULL; }
 
-
+// setters
 bool flight_set_id(Flight *f, const char *id){ if(!f) return false; if(!is_valid_flight_id(id)) return false; char *d=strdup(id); if(!d && id) return false; free(f->id); f->id=d; return true; }
 bool flight_set_departure(Flight *f, const char *departure){ if(!f) return false; char *d=strdup(departure); if(!d && departure) return false; free(f->departure); f->departure=d; return true; }
 bool flight_set_actual_departure(Flight *f, const char *actual_departure){ if(!f) return false; char *d=strdup(actual_departure); if(!d && actual_departure) return false; free(f->actual_departure); f->actual_departure=d; return true; }
