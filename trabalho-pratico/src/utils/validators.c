@@ -1,23 +1,27 @@
 #include <ctype.h>
 #include "utils/validators.h"
 
+// Verifica se a string contém apenas dígitos
 static int all_digits(const char *s) {
     if (!s || !*s) return 0;
     for (; *s; s++) if (!isdigit((unsigned char)*s)) return 0;
     return 1;
 }
 
+// Verifica se a string é um código IATA válido com três letras maiúsculas
 int is_valid_iata3(const char *s) {
     if (!s || strlen(s)!=3) return 0;
     for (int i=0;i<3;i++) if (s[i]<'A'||s[i]>'Z') return 0;
     return 1;
 }
 
+// Converte n caracteres numéricos consecutivos para um inteiro
 static int parse_int2(const char *p, int n, int *out) {
     int v=0; for (int i=0;i<n;i++) { if (!isdigit((unsigned char)p[i])) return 0; v = v*10 + (p[i]-'0'); }
     *out = v; return 1;
 }
 
+// Verifica se a data não é posterior a 30 de setembro de 2025
 static int not_future_date(int Y,int M,int D) {
     if (Y>2025) return 0;
     if (Y==2025 && M>9) return 0;
@@ -25,6 +29,7 @@ static int not_future_date(int Y,int M,int D) {
     return 1;
 }
 
+// Verifica se a string representa uma data válida no formato YYYY-MM-DD
 int is_valid_date(const char *s) {
     if (!s || strlen(s)!=10) return 0;
     if (s[4]!='-'||s[7]!='-') return 0;
