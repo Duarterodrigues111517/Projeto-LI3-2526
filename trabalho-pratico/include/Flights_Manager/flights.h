@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <utils/validators.h>
 
+/**
+ * @brief EStrutura opaco que representa um voo.
+ *
+ * A estrutura interna é mantida privada no ficheiro de implementação (.c).
+ * Deve ser criada com flight_new() e destruída com flight_free().
+ */
 typedef struct Flight Flight;
 
 // Construção / destruição
