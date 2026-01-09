@@ -42,6 +42,7 @@ int is_valid_date(const char *s) {
     return not_future_date(Y,M,D);
 }
 
+// Verifica se a string representa uma data e hora válida no formato YYYY-MM-DD HH:MM
 int is_valid_datetime(const char *s) {
     
     if (!s || strlen(s) != 16) return 0;
