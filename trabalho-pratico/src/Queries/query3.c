@@ -16,15 +16,14 @@ static int datetime_in_range(const char *datetime,
                              const char *start_date,
                              const char *end_date)
 {
-    if (!datetime || !start_date || !end_date) return 0;
-    if (strlen(datetime) < 10) return 0;
+    if (!datetime || strlen(datetime) < 10) return 0;
+    if (!start_date || strlen(start_date) < 10) return 0;
+    if (!end_date   || strlen(end_date)   < 10) return 0;
 
-    char date[11];
-    memcpy(date, datetime, 10);
-    date[10] = '\0';
+    int cmp_start = strncmp(datetime, start_date, 10);
+    int cmp_end   = strncmp(datetime, end_date,   10);
 
-    return strcmp(date, start_date) >= 0 &&
-           strcmp(date, end_date)   <= 0;
+    return (cmp_start >= 0 && cmp_end <= 0);
 }
 
 
