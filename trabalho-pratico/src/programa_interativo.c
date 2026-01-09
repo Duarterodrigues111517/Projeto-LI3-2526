@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
+#include <glib.h>
 
 #include "Parser/airports_parser.h"
 #include "Parser/aircrafts_parser.h"
@@ -14,34 +17,116 @@
 #include "Queries/query5.h"
 #include "Queries/query6.h"
 
-int main(void) {
-    char dataset_path[512];
+#define BUF 512
 
-    printf("Introduza o caminho dos ficheiros de dados: ");
-    fflush(stdout);
+/* ----------------------------------------------------- */
+/* helpers básicos                                       */
+/* ----------------------------------------------------- */
 
-    if (!fgets(dataset_path, sizeof(dataset_path), stdin)) {
-        fprintf(stderr, "Erro a ler caminho.\n");
-        return 1;
+static void trim_newline(char *s) {
+    if (!s) return;
+    s[strcspn(s, "\r\n")] = '\0';
+}
+
+static void read_line_or_exit(const char *prompt, char *buf, size_t sz) {
+    while (1) {
+        printf("%s", prompt);
+        fflush(stdout);
+
+        if (!fgets(buf, (int)sz, stdin)) {
+            printf("\nEOF recebido. A sair.\n");
+            exit(0);
+        }
+
+        trim_newline(buf);
+
+        if (buf[0] != '\0') return;
+
+        printf("Entrada inválida. Tente novamente.\n");
     }
-    dataset_path[strcspn(dataset_path, "\n")] = '\0';
+}
 
-    /* construir paths */
-    char airports_file[600], aircrafts_file[600], flights_file[600];
-    char passengers_file[600], reservations_file[600];
+static int read_positive_int(const char *prompt) {
+    char line[BUF];
 
-    snprintf(airports_file, sizeof(airports_file), "%s/airports.csv", dataset_path);
-    snprintf(aircrafts_file, sizeof(aircrafts_file), "%s/aircrafts.csv", dataset_path);
-    snprintf(flights_file, sizeof(flights_file), "%s/flights.csv", dataset_path);
-    snprintf(passengers_file, sizeof(passengers_file), "%s/passengers.csv", dataset_path);
-    snprintf(reservations_file, sizeof(reservations_file), "%s/reservations.csv", dataset_path);
+    while (1) {
+        printf("%s", prompt);
+        fflush(stdout);
 
-    /* carregar dataset */
-    AirportsManager_t *am = parse_airports_file(airports_file);
-    AircraftsManager_t *acm = parse_aircrafts_file(aircrafts_file);
-    FlightsManager_t *fm = parse_flights_file(flights_file, acm);
-    PassengersManager_t *pm = parse_passengers_file(passengers_file);
-    ReservationsManager_t *rm = parse_reservations_file(reservations_file, fm, pm);
+        if (!fgets(line, sizeof(line), stdin)) {
+            printf("\nEOF recebido. A sair.\n");
+            exit(0);
+        }
+
+        trim_newline(line);
+
+        char *end = NULL;
+        long v = strtol(line, &end, 10);
+
+        while (end && (*end == ' ' || *end == '\t')) end++;
+
+        if (end != line && *end == '\0' && v > 0)
+            return (int)v;
+
+        printf("Valor inválido. Tente novamente.\n");
+    }
+}
+
+/* ----------------------------------------------------- */
+/* parsing do número da query (1, 1S, etc)               */
+/* ----------------------------------------------------- */
+
+static int parse_query(const char *s, int *qid, char *sep) {
+    if (!s || !qid || !sep) return 0;
+
+    while (*s == ' ' || *s == '\t') s++;
+
+    char *end = NULL;
+    long v = strtol(s, &end, 10);
+
+    if (end == s || v <= 0) return 0;
+
+    *qid = (int)v;
+    *sep = ';';
+
+    if (*end == 'S') {
+        *sep = '=';
+        end++;
+    }
+
+    while (*end == ' ' || *end == '\t') end++;
+
+    return (*end == '\0');
+}
+
+/* ----------------------------------------------------- */
+/* main                                                  */
+/* ----------------------------------------------------- */
+
+int main(void) {
+    char dataset[BUF];
+
+    read_line_or_exit(
+        "Introduza o caminho do dataset: ",
+        dataset, sizeof(dataset)
+    );
+
+    /* construir caminhos */
+    char airports_p[BUF], aircrafts_p[BUF], flights_p[BUF];
+    char passengers_p[BUF], reservations_p[BUF];
+
+    snprintf(airports_p,     sizeof(airports_p),     "%s/airports.csv",     dataset);
+    snprintf(aircrafts_p,    sizeof(aircrafts_p),    "%s/aircrafts.csv",    dataset);
+    snprintf(flights_p,      sizeof(flights_p),      "%s/flights.csv",      dataset);
+    snprintf(passengers_p,   sizeof(passengers_p),   "%s/passengers.csv",   dataset);
+    snprintf(reservations_p, sizeof(reservations_p), "%s/reservations.csv", dataset);
+
+    /* carregar dados */
+    AirportsManager_t     *am = parse_airports_file(airports_p);
+    AircraftsManager_t    *acm = parse_aircrafts_file(aircrafts_p);
+    FlightsManager_t      *fm = parse_flights_file(flights_p, acm);
+    PassengersManager_t   *pm = parse_passengers_file(passengers_p);
+    ReservationsManager_t *rm = parse_reservations_file(reservations_p, fm, pm);
 
     airports_manager_compute_passenger_counts(am, fm, rm);
 
@@ -51,78 +136,108 @@ int main(void) {
 
     compute_q6(q6_table, rm, fm, pm);
 
-    printf("Dataset carregado...\n");
+    printf("\nDataset carregado com sucesso.\n");
 
-    int q;
-    printf("Que query deseja executar? ");
-    fflush(stdout);
+    /* ------------------------------------------------- */
+    /* loop interativo                                   */
+    /* ------------------------------------------------- */
 
-    if (scanf("%d", &q) != 1) {
-        printf("Query inválida.\n");
-        goto cleanup;
+    while (1) {
+        char qline[BUF];
+        int qid = 0;
+        char sep = ';';
+
+        printf("\nNúmero da query (1, 1S, 2, 2S, ... ou 0 para sair): ");
+        fflush(stdout);
+
+        if (!fgets(qline, sizeof(qline), stdin)) {
+            printf("\nEOF recebido. A sair.\n");
+            break;
+        }
+
+        trim_newline(qline);
+
+        if (strcmp(qline, "0") == 0) {
+            printf("A sair...\n");
+            break;
+        }
+
+        if (!parse_query(qline, &qid, &sep)) {
+            printf("Query inválida. Tente novamente.\n");
+            continue;
+        }
+
+        /* ----------------------- */
+        /* QUERY 1                 */
+        /* ----------------------- */
+        if (qid == 1) {
+            char code[BUF];
+            read_line_or_exit("Código do aeroporto: ", code, sizeof(code));
+            querie1(code, sep, am, "/dev/stdout");
+        }
+
+        /* ----------------------- */
+        /* QUERY 2                 */
+        /* ----------------------- */
+        else if (qid == 2) {
+            int N = read_positive_int("Top N: ");
+
+            char manufacturer[BUF];
+            printf("Manufacturer (vazio para nenhum): ");
+            fflush(stdout);
+            fgets(manufacturer, sizeof(manufacturer), stdin);
+            trim_newline(manufacturer);
+
+            const char *man = (manufacturer[0] == '\0') ? NULL : manufacturer;
+
+            querie2(N, man, sep, acm, fm, "/dev/stdout");
+        }
+
+        /* ----------------------- */
+        /* QUERY 3                 */
+        /* ----------------------- */
+        else if (qid == 3) {
+            char d1[BUF], d2[BUF];
+            read_line_or_exit("Data inicial (YYYY-MM-DD): ", d1, sizeof(d1));
+            read_line_or_exit("Data final   (YYYY-MM-DD): ", d2, sizeof(d2));
+
+            querie3(d1, d2, sep, am, fm, "/dev/stdout");
+        }
+
+        /* ----------------------- */
+        /* QUERY 4 (não feita)     */
+        /* ----------------------- */
+        else if (qid == 4) {
+            printf("Query 4 não está implementada.\n");
+        }
+
+        /* ----------------------- */
+        /* QUERY 5                 */
+        /* ----------------------- */
+        else if (qid == 5) {
+            int N = read_positive_int("Top N companhias: ");
+
+            char nbuf[32];
+            snprintf(nbuf, sizeof(nbuf), "%d", N);
+
+            querie5(nbuf, sep, fm, "/dev/stdout");
+        }
+
+        /* ----------------------- */
+        /* QUERY 6                 */
+        /* ----------------------- */
+        else if (qid == 6) {
+            char nat[BUF];
+            read_line_or_exit("Nacionalidade: ", nat, sizeof(nat));
+            querie6(nat, sep, q6_table, "/dev/stdout");
+        }
+
+        else {
+            printf("Query desconhecida.\n");
+        }
     }
 
-    /* ---------------- QUERIES ---------------- */
-
-    if (q == 1) {
-        char code[16];
-        printf("Código do aeroporto: ");
-        scanf("%15s", code);
-
-        querie1(code, ';', am, "/dev/stdout");
-
-    } else if (q == 2) {
-        int N;
-        char manufacturer[128];
-
-        printf("Top N: ");
-        scanf("%d", &N);
-
-        printf("Manufacturer (ou - para nenhum): ");
-        scanf("%127s", manufacturer);
-
-        const char *man = NULL;
-        if (strcmp(manufacturer, "-") != 0)
-            man = manufacturer;
-
-        querie2(N, man, ';', acm, fm, "/dev/stdout");
-
-    } else if (q == 3) {
-        char start_date[32], end_date[32];
-
-        printf("Data inicial (YYYY-MM-DD): ");
-        scanf("%31s", start_date);
-
-        printf("Data final (YYYY-MM-DD): ");
-        scanf("%31s", end_date);
-
-        querie3(start_date, end_date, ';', am, fm, "/dev/stdout");
-
-    } else if (q == 4) {
-        printf("Query 4 nao esta disponivel neste projeto.\n");
-
-    } else if (q == 5) {
-        int N;
-        printf("Top N companhias: ");
-        scanf("%d", &N);
-
-        char buf[32];
-        snprintf(buf, sizeof(buf), "%d", N);
-
-        querie5(buf, ';', fm, "/dev/stdout");
-
-    } else if (q == 6) {
-        char nationality[64];
-        printf("Nacionalidade: ");
-        scanf("%63s", nationality);
-
-        querie6(nationality, ';', q6_table, "/dev/stdout");
-
-    } else {
-        printf("Query invalida.\n");
-    }
-
-cleanup:
+    /* cleanup */
     airports_manager_free(am);
     aircrafts_manager_free(acm);
     flights_manager_free(fm);
