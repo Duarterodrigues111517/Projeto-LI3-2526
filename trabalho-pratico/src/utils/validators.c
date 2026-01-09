@@ -60,6 +60,7 @@ int is_valid_datetime(const char *s) {
     return 1;
 }
 
+// Verifica se a string representa um endereço de email válido segundo o enunciado
 int is_valid_email(const char *e) {
     if (!e) return 0;
     const char *at = strchr(e,'@'); if (!at) return 0;
@@ -76,11 +77,13 @@ int is_valid_email(const char *e) {
     return 1;
 }
 
+// Verifica se o tipo de aeroporto pertence ao conjunto de valores permitidos
 int is_valid_airport_type(const char *t) {
     return t && (!strcmp(t,"small_airport")||!strcmp(t,"medium_airport")||
                  !strcmp(t,"large_airport")||!strcmp(t,"heliport")||!strcmp(t,"seaplane_base"));
 }
 
+// Verifica se a string é um decimal válido e está dentro do intervalo permitido
 static int is_valid_decimal_in_range(const char *s, int maxAbsDeg, int maxIntDigits) {
     if (!s || !*s) return 0;
     const char *p=s; if (*p=='-') p++;
@@ -97,9 +100,12 @@ static int is_valid_decimal_in_range(const char *s, int maxAbsDeg, int maxIntDig
     if (val<-maxAbsDeg || val>maxAbsDeg) return 0;
     return 1;
 }
+
+// Valida latitude e longitude reutilizando a verificação genérica de decimais
 int is_valid_lat(const char *s){ return is_valid_decimal_in_range(s, 90, 2); }
 int is_valid_lon(const char *s){ return is_valid_decimal_in_range(s,180, 3); }
 
+// Verifica se o identificador de voo segue o formato ccdddddd? definido no enunciado
 int is_valid_flight_id(const char *s) {
     if (!s) return 0;
     
@@ -114,29 +120,35 @@ int is_valid_flight_id(const char *s) {
     return all_digits(s+2);
 }
 
+// Verifica se o identificador de reserva segue o formato R seguido de 9 dígitos
 int is_valid_reservation_id(const char *s) {
     return s && strlen(s)==10 && s[0]=='R' && all_digits(s+1);
 }
 
+// Verifica se o número de documento tem exatamente 9 dígitos
 int is_valid_document_number(const char *s) {
     return s && strlen(s)==9 && all_digits(s);
 }
 
+// Verifica se o género é um dos valores permitidos (M, F ou O)
 int is_valid_gender(const char *s) {
     return s && (!strcmp(s,"M")||!strcmp(s,"F")||!strcmp(s,"O"));
 }
 
+// Verifica se a string está no formato de lista entre parênteses retos (começa em '[' e termina em ']')
 int is_valid_bracket_list(const char *s) {
     size_t n = s? strlen(s):0;
     return n>=2 && s[0]=='[' && s[n-1]==']';
 }
 
+// Verifica se a string não é vazia após ignorar espaços iniciais
 int is_nonempty_str(const char *s) {
     if (!s) return 0;
     while (*s && isspace((unsigned char)*s)) s++;
     return *s != '\0';
 }
 
+// Verifica se o estado do voo é um dos valores permitidos (On Time, Cancelled ou Delayed)
 int is_valid_status(const char *s) {
     return s && (
         strcmp(s, "On Time") == 0 ||
@@ -145,12 +157,12 @@ int is_valid_status(const char *s) {
     );
 }
 
+// Verifica se o código do país tem exatamente duas letras maiúsculas
 int is_valid_country_code(const char *s) {
     return s && strlen(s)==2 && isupper((unsigned char)s[0]) && isupper((unsigned char)s[1]);
 }
 
-
-
+// Compara duas datas e horas no formato YYYY-MM-DD HH:MM por ordem cronológica
 int compare_datetimes(const char *dt1, const char *dt2) {
     return strcmp(dt1, dt2);
 }
