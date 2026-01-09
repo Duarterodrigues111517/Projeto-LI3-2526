@@ -3,17 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+// Função auxiliar usada no cálculo do número de dias desde 1970.
 static int is_leap(int y) {
     return (y % 400 == 0) || (y % 4 == 0 && y % 100 != 0);
 }
 
+// Devolve o nº de dias de um mês.
 static int days_in_month(int y, int m) {
     static const int days[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
     if (m == 2 && is_leap(y)) return 29;
     return days[m];
 }
 
+// Converte uma data (Y-M-D) para nº de dias desde 1970-01-01.
 static long long days_from_civil(int y, int m, int d) {
     long long total_days = 0;
     for (int year = 1970; year < y; year++) {
@@ -28,6 +30,7 @@ static long long days_from_civil(int y, int m, int d) {
     return total_days;
 }
 
+// Faz parsing de "YYYY-MM-DD HH:MM" e devolve minutos desde 1970.
 static int parse_datetime_minutes(const char *s, long long *out_minutes) {
     if (!s || !out_minutes) return 0;
     int Y,M,D,h,mi;
@@ -56,7 +59,7 @@ struct FlightsManager {
     GHashTable *q5_airline_stats;
 };
 
-
+// Cria e inicializa o gestor de voos e as suas estruturas internas.
 FlightsManager_t *flights_manager_new(void) {
     FlightsManager_t *fm = malloc(sizeof(FlightsManager_t));
     if (!fm) return NULL;
@@ -87,7 +90,7 @@ FlightsManager_t *flights_manager_new(void) {
     return fm;
 }
 
-
+// Liberta toda a memória associada ao gestor de voos.
 void flights_manager_free(FlightsManager_t *fm) {
     if (!fm) return;
     g_hash_table_destroy(fm->flights_table);
@@ -100,7 +103,7 @@ GHashTable *flights_manager_get_q5_table(const FlightsManager_t *fm) {
     return fm ? fm->q5_airline_stats : NULL;
 }
 
-
+// Liberta toda a memória associada ao gestor de voos.
 void flights_manager_update_q5(FlightsManager_t *fm, const Flight *f) {
     if (!fm || !f) return;
 
@@ -133,7 +136,7 @@ void flights_manager_update_q5(FlightsManager_t *fm, const Flight *f) {
     st->total_delay_minutes += delay;
 }
 
-
+// Adiciona um voo ao gestor e atualiza estatísticas relevantes.
 void flights_manager_add(FlightsManager_t *fm, Flight *f) {
     if (!fm || !f) return;
 
@@ -143,12 +146,13 @@ void flights_manager_add(FlightsManager_t *fm, Flight *f) {
     g_hash_table_insert(fm->flights_table, g_strdup(flight_get_id(f)), f);
 }
 
-
+// Devolve o voo correspondente ao id, ou NULL se não existir.
 Flight *flights_manager_get(const FlightsManager_t *fm, const char *id) {
     if (!fm || !id) return NULL;
     return (Flight *)g_hash_table_lookup(fm->flights_table, id);
 }
 
+// Aplica uma função a todos os voos do gestor sem expor a estrutura interna.
 void flights_manager_foreach(FlightsManager_t *fm,
                              void (*fn)(Flight *f, void *user_data),
                              void *user_data)
