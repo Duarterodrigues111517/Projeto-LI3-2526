@@ -15,22 +15,27 @@
 #define OUTPUT_DIR "resultados/"
 #endif
 
+// Função principal responsável por carregar os dados e executar o programa em modo principal
 int main(int argc, char *argv[]) {
+    // Verifica se o número de argumentos da linha de comandos é válido
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <path dataset> <input>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
+    // Obtém os caminhos do dataset e do ficheiro de input
     const char *datasetDir = argv[1];
     const char *inputFile = argv[2]; 
+    // Define o diretório de output dos resultados
     const char *outputDir = OUTPUT_DIR;
     (void)outputDir; 
+    // Aloca memória e constrói os caminhos completos para os ficheiros CSV
     char *airports_file = malloc(strlen(datasetDir) + strlen("/airports.csv") + 1);
     char *aircrafts_file = malloc(strlen(datasetDir) + strlen("/aircrafts.csv") + 1);
     char *flights_file = malloc(strlen(datasetDir) + strlen("/flights.csv") + 1);
     char *reservations_file = malloc(strlen(datasetDir) + strlen("/reservations.csv") + 1);
     char *passengers_file = malloc(strlen(datasetDir) + strlen("/passengers.csv") + 1);
-
+    
     strcpy(airports_file, datasetDir);   strcat(airports_file, "/airports.csv");
     strcpy(aircrafts_file, datasetDir);  strcat(aircrafts_file, "/aircrafts.csv");
     strcpy(flights_file, datasetDir);    strcat(flights_file, "/flights.csv");
