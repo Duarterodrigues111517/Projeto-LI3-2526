@@ -72,9 +72,9 @@ static int read_positive_int(const char *prompt) {
     }
 }
 
-/* ----------------------------------------------------- */
+
 /* parsing do número da query (1, 1S, etc)               */
-/* ----------------------------------------------------- */
+
 
 static int parse_query(const char *s, int *qid, char *sep) {
     if (!s || !qid || !sep) return 0;
@@ -99,9 +99,9 @@ static int parse_query(const char *s, int *qid, char *sep) {
     return (*end == '\0');
 }
 
-/* ----------------------------------------------------- */
+
 /* main                                                  */
-/* ----------------------------------------------------- */
+
 
 int main(void) {
     char dataset[BUF];
