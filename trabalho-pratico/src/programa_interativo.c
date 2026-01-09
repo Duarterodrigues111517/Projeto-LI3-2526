@@ -193,12 +193,28 @@ int main(void) {
         /* QUERY 3                 */
         
         else if (qid == 3) {
-            char d1[BUF], d2[BUF];
-            read_line_or_exit("Data inicial (YYYY-MM-DD): ", d1, sizeof(d1));
-            read_line_or_exit("Data final   (YYYY-MM-DD): ", d2, sizeof(d2));
+    char d1[BUF], d2[BUF];
 
-            querie3(d1, d2, sep, am, fm, "/dev/stdout");
+    while (1) {
+        read_line_or_exit("Data inicial (YYYY-MM-DD): ", d1, sizeof(d1));
+        read_line_or_exit("Data final   (YYYY-MM-DD): ", d2, sizeof(d2));
+
+        if (!is_valid_date(d1) || !is_valid_date(d2)) {
+            printf("Formato de data inválido. Tente novamente.\n");
+            continue;
         }
+
+        if (strcmp(d1, d2) > 0) {
+            printf("A data inicial tem de ser anterior ou igual à data final.\n");
+            continue;
+        }
+
+        break;
+    }
+
+    querie3(d1, d2, sep, am, fm, "/dev/stdout");
+}
+
 
         
         /* QUERY 4 (não feita)     */
