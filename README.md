@@ -1,4 +1,4 @@
-# Laboratórios de Informática III (2024/2025)
+# Laboratórios de Informática III (2025/2026)
 
 * Duarte Pedro Nogueira Rodrigues - A111517 - duarterodrigues111517
 * Mariana Martins Leal - A111248 - mariana111248
